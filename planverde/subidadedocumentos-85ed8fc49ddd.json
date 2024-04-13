@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "subidadedocumentos",
+  "private_key_id": "85ed8fc49ddd7a9d5a1ffbae32796925980f97f2",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC4vTDUWwPANMlM\n1bsxMq0rVZlvyf0o+8oiJRUJEDhcKK6ujWEiagnGViMx3Vt+fYUKBzUP5v9J+1Un\n0yxkhz5fXpz8OJo4iufJjwoRdJbmyXjuDcZVHXFNxVC/Rz2aP0l2WiiNOXqiQnXJ\nUQzZzn5JEHYJp1/V0k91ELm4wnGGpVjgJSOKGwaB+1i8v8yclpq0KsImAhC3xqeU\nZ/E1sD8j6+P7pQAXd6TMnsRAp9Ib2aPUXuBkG2XbxM7T+CNv0zgpxVNpNwFmuBD0\nrtiIYz+Bv+48hxBrT6y/UY0TvcZ/TT3LC8YAdsic66Cz5jjPqp+wxiWf2MI3Q6IJ\n4/w5Al8LAgMBAAECggEAAuNOPpuXoOsSVIWo0fmRVHKXnfRB5WCeRc9fl08uGl62\ncFsccB3JPlT9YturgPw0VrZLIY8CYaUwrRkzgfTNSE9h092Mp6KgQfne9evlKgFv\nRwVnGtCFg2o4u2zBLUac/uEk7iQ+Ywf38Gg4c7UzKzA7MCZyLJUHkfRretRrUuf+\n+lt8NTaKFnjlRsPa3wGCBXPljII83W2poU4gRLhejQff77xz+R/KfHZuYgfbE6y7\nBBkfzpNPqq3uvWLNEfLWBRh8VL2Chu7kLxXf2pTZxP74cXlGj2ryDc29gM0E/BJ9\nebHGZkvGKDUZlrvh7C/ll0CVuZzQyxPtbLmKNK5vHQKBgQDuMJ/GfvkLhVwu8EOm\nW+yGQ+MTGa6+RWPBBc/UEAZQoUI+80UKsaSeAKLRzIhTsRp3JCQ2DhmoxZN185nM\nANerSGkCNZmMuMH5+/14j0QGbtoAKE/u0eNFSa5YB3K9lH7CoMlq29AVmiZI3g5c\nobwjpaG1ZFHkrkNRviEKAbxhTwKBgQDGjWv8CpI5tAlMndmR3B5kKNXdLJzxU+Ty\njyemflYHpen/FgVTVSQ1lef+1QQa9ToxGqRjMh6p+S6eY0tcnlui4vvB9w81WYXd\ngVyOdiKCM5J8Zf7mdHCovYdk466qMMdZArdGgq/U37lGYqgYIfuIoAaVaj5sne+S\nOcd2GKDfhQKBgBvrcy8PPx4Mmcueui9L4yOx3XIltofzFkhP6BaRckwNOviqB1PD\nkuo6ZNt2wBwfTFzezafQa02PK0PONB7nkmAvcq+hnMgT+BjXYtS45l5irAcMsqHp\n1FwQ0PDcnqR+PYWO101BStjdYtNzw/czthvvlE7w3XCSxK1WPgUwQuadAoGAFxFL\nIGciAe42vl4Abv/B0CUmY6HRQgBbMwsKsj8vQ4g1HVuzlrDnmgomf+bDqVYgQqAz\nxQqHoXu/vMsQcFw9jTkNwsUvUSVrdgaXeD2lWLchJ6655JBWnmQWnNQO8Nrl7iNw\no5J/Vx3+6nx/xv37uS3OVgGX6wqWUMjBsai+1/kCgYBvP/nY9SL/TUIYAPQuTaR0\njzrF6I4RdRiEzJuNdLtNHOkTJ15RQnx4TbgCUTXMdtd0Yve8udz7ecOjvOeRYoho\n8pzIgau7nuYvf10BO/9CwxUVVqx45KOpjdPP3KzN+qtVrWGycmTonWejOzP6bAu0\n2JprF8HTtJJhmWnJ0RPf6w==\n-----END PRIVATE KEY-----\n",
+  "client_email": "subidadedocumentos@subidadedocumentos.iam.gserviceaccount.com",
+  "client_id": "116667926168637449593",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/subidadedocumentos%40subidadedocumentos.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

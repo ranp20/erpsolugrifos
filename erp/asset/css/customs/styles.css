@@ -1,0 +1,18 @@
+/* UTILITIE CLASS*/
+.mg_b-05{margin-bottom: .5rem;}
+.mg_b-1{margin-bottom: 1rem;}
+/* DASHBOARD - NOTIFICACIONES */
+.n-cont__custom span{
+    display: block;
+}
+.n-cont__custom > span:first-child{
+    margin-bottom: .5rem;
+}
+.n-cont__custom span.val_v_tecnica{
+    display: inline-block;
+    color: #FF0000;
+}
+.n-cont__custom span.val_v_service{
+    display: inline-block;
+    color: #FF00FF;
+}

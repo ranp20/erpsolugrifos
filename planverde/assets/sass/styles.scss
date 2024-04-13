@@ -1,0 +1,14 @@
+/* IMPORT BOOTSTRAP STYLES */
+@import 'theme/toastr';
+@import 'theme/bootstrap-v3.3.5';
+// @import 'theme/bootstrap-v4.0.0';
+// @import 'theme/bootstrap-v5.0.1';
+@import 'theme/appcustoms';
+/* IMPORT STYLES BASES */
+@import 'bases/bases';
+/* IMPORT STYLES OF THEME */
+@import 'theme/custom';
+@import 'theme/dashboard';
+@import 'theme/pverde_settings';
+@import 'theme/pverde_login';
+@import 'theme/fonts';

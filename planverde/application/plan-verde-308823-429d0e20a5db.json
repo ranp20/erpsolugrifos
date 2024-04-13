@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "plan-verde-308823",
+  "private_key_id": "429d0e20a5db4cc41f3a3e9566b5119886d76e48",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC3hu0N2XA4v9dP\neEVAfaSXzunG83ElGb+9zWg/03JJETVF+RjVy//QD31/7uvLUN2/ULLZPaXNksfJ\n4ZpZEjw4FrgnZUOCxr8DzcPW+jQJO+oO9AaUAk5xdb3aV5+3pyyI/5FXvT/87Mhs\nDQPweEGmfsRioAyrKjUS0+q+2KInYrGONIBO6NYmybtCX7dkPkMg5Bq3Tp4uyKC+\nYapF1lB8kXZnWfFnuCwhAcIhYLeXKUlMShNsOwzpxtp8VkOBPk8MmczTZtGAjpmk\nENqy/WTkPuj/pxEs7n9L4E3RNeVw4vmHX/e3f7Hp8iiP2LO5xJe/BqfcXMwlDPf3\nxCRBqiYXAgMBAAECggEAAx5CQdV7cCNmS53eA1n/JWspEq3JMtmspdNrHYaArxgh\nQRaZ4uwL5SOWPMm47OPrWJhM6Z8ABa2kQlxYbIIATu2n5Fd2na61ySFCXhEzOCLx\n954SzIn7fjcDakXJ22t2OL+q3wRCpY/6Wceg1QGeD++gc5KHlJLrgu3h06tHmgau\nWSjooYi2zoSAAIZpJs795e/iZTW8XIXVJxUILu47TMBCQW/1wUdKAD3shwrfzUiy\nHl9AWwVKlN8GyzqzUigMKr6yy4Q25xkeK+LOse+0xUuhFVa8GZRln6b/yO6iwakS\nKX2IbJByBbF3OKeZEHsyofYeEW9kU2+8zOhR4KiAmQKBgQDwE2eWicMcZHfPJDw3\n0rrYfbpJ5bESHrWrceoEBgitsnPG8hJ2idK4armY6bdCIdkqditQpl011uF8Py+8\ntNRg9gJaNIog6gEl860jdrhyso0uW1ixogt/npOXIGFJT4UG6N2OZ5LLf0A2bBM7\nyw5ryz1mlhngv+6N4UUXBnibuQKBgQDDs0xUOsedqEUodlPaVKuaPoO/UwWtkc+r\noi4Ev8PtSG+HwRk5hMw2jM0ZegMoZ0oM416fTg1Ky0FoS8A0/CZDblThgCrgViyZ\ngfQT8kMslv2gNcNoyArXM8QqARX5hNdDiCnq13wchxdamqyWm09+G2MriUnBtOGq\nMr8+qn7YTwKBgHEic9p5KT0kC2HOTaJw6CRFe5h/aaaEWlBk6kbjIQvZ4L2MLi82\nW9sUUEpDOV0s3k4oSdlDzQEmNjR7AmAHR146EHm58K36GHhuENV5iQpkIiwKWA29\ns3V8oUjCtZX6p1HOQzpsjLzhRr1eyOGQm0cpC9JgQemsCRtLYWesYQHhAoGAYrVt\nKo77YGofd+k3IkjSxVoC2d3mX0XMmaWT0JFpIaYHm1Gqh3iUCG+8g70nGpn+n8GP\nWIrl6XPb6d9Lc247XoeoCJW9CqpslIEXu3fWqgb+pnB3v8ImtaVGrGkfzFtUuJtV\niT5nO3xoKysZIl30God13d/BdBLoQBCYpeMZV8ECgYEAtQKAaeeadrcrq0XhN0xM\nEE22UpXcXwJ3RFeo0NF9tqp5GqHszsWr4mg2ULSKmZDERiiYD8i2czbatEc/Opv8\nTSee3HLzhNvuWeEG1w9uv3n3QqYZYWsQ1Bv8HpEIghRaka9a+5+/9fgy6wl8TBez\nib9ML1T8TphWgagp7zRH24o=\n-----END PRIVATE KEY-----\n",
+  "client_email": "almacenamiento-plan-verde@plan-verde-308823.iam.gserviceaccount.com",
+  "client_id": "112953122643377072558",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/almacenamiento-plan-verde%40plan-verde-308823.iam.gserviceaccount.com"
+}

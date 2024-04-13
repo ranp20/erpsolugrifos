@@ -1,0 +1,18 @@
+/******************** AJUSTE (.show-scrollbar) ********************/
+*.show-scrollbar{overflow-y:auto !important;}
+*.show-scrollbar::-webkit-scrollbar{width: 6px !important;height: 6px !important;}
+*.show-scrollbar:-webkit-scrollbar-thumb{background-color: rgba(50,50,50,.3) !important;}
+*.show-scrollbar::-webkit-scrollbar-thumb{background-color: #17759a !important;}
+*.show-scrollbar::-webkit-scrollbar-track{background-color: rgba(50, 50, 50, 0.1) !important;}
+*.show-scrollbar:-webkit-scrollbar-track{background-color: rgba(50,50,50,.1) !important;}
+/******************** AJUSTE (.login_background-reverse) ********************/
+.c_mainPgLog-inPLV > img.login_background-reverse{-moz-transform: scaleX(-1) !important;-o-transform: scaleX(-1) !important;-webkit-transform: scaleX(-1) !important;transform: scaleX(-1) !important;-ms-filter: "FlipH" !important;filter: FlipH !important;}
+/* AJUSTES SOLO PARA DESKTOP */
+@media (min-width: 768px){
+    /******************** AJUSTE (.login-position) ********************/
+    .c_mainPgLog-inPLV__c--c--cSel{
+        &.posit-left{margin: 25px auto 25px 0 !important;}
+        &.posit-right{margin: 25px 0 25px auto !important;}
+        &.posit-center{margin: 25px auto 25px auto !important;}
+    }  
+}

@@ -1,0 +1,185 @@
+/*fuente dinpro-black*/
+@font-face{
+font-family:"din-light"; /* nombre de la fuente */
+src: url(../fonts/din-light.woff);
+}
+
+*,
+*:after,
+*:before{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body, html{
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+	background-color: #fff;
+}
+body{
+    overflow: hidden;
+}
+a{
+    text-decoration: none;
+}
+/***************************** NUEVO CSS - INICIO *****************************/
+.c_mainPgSelModule{
+    min-height: 100vh;
+    width: 100%;
+    height: 100%;
+    border: 0px red solid;
+    background: unset;
+    top: 0;
+    left: 0;
+    position: relative;
+    overflow: hidden;
+}
+.c_mainPgSelModule:before{
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: rgba(0,0,0,.2);
+    z-index: 9;   
+}
+.c_mainPgSelModule--imgbck{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    position: relative;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+.c_mainPgSelModule__c{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: auto;
+    transform: translate(-50%,-50%);
+    overflow: hidden;
+    z-index: 999;
+}
+.c_mainPgSelModule__c--c{
+    max-width: 1200px;
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
+    top: 0;
+    left: 0;
+    display: block;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.c_mainPgSelModule__c--c--cSel{
+    max-width: 424px;
+    height: auto;
+    border-radius: 8px;
+    background-color: rgba(0,0,0,.6);
+    display: block;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: left;
+    box-shadow: 0px 2px 5px 1px rgba(0,0,0,.1);
+}
+.c_mainPgSelModule__c--c--cSel--cLogo{
+    max-width: 378px;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+.c_mainPgSelModule__c--c--cSel--cLogo--link{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.c_mainPgSelModule__c--c--cSel--cLogo img{
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+    border: none;
+    cursor: pointer;
+    display: block;
+    position: relative;
+}
+.c_mainPgSelModule__c--c--cSel--cGroupBtns{
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-flow: row wrap;
+}
+.c_mainPgSelModule__c--c--cSel--cGroupBtns__link{
+    text-decoration: none;
+    color: #fff;
+    max-width: 262px;
+    width: 96%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-flow: row nowrap;
+    font-weight: 600;
+    font-family: verdana;
+    border-radius: 6px;
+    font-size: 1rem;
+    padding: 0.5rem 0.85rem;
+    line-height: 0.5;
+}
+.c_mainPgSelModule__c--c--cSel--cGroupBtns__link:first-child{background-color: #009D58;}
+.c_mainPgSelModule__c--c--cSel--cGroupBtns__link:nth-child(2){background-color: #1883BA;}
+
+.c_mainPgSelModule__c--c--cSel--cGroupBtns__link:first-child:hover{background-color: #fff;}
+.c_mainPgSelModule__c--c--cSel--cGroupBtns__link:first-child:hover .c_mainPgSelModule__c--c--cSel--cGroupBtns__link--cTxt{color: #009D58;}
+.c_mainPgSelModule__c--c--cSel--cGroupBtns__link:first-child:hover .c_mainPgSelModule__c--c--cSel--cGroupBtns__link--cIcon svg{fill: #009D58;}
+.c_mainPgSelModule__c--c--cSel--cGroupBtns__link:nth-child(2):hover{background-color: #fff;}
+.c_mainPgSelModule__c--c--cSel--cGroupBtns__link:nth-child(2):hover .c_mainPgSelModule__c--c--cSel--cGroupBtns__link--cTxt{color: #1883BA;}
+.c_mainPgSelModule__c--c--cSel--cGroupBtns__link:nth-child(2):hover .c_mainPgSelModule__c--c--cSel--cGroupBtns__link--cIcon svg{fill: #1883BA;}
+.c_mainPgSelModule__c--c--cSel--cGroupBtns__link--cTxt{
+    color: #fff;
+}
+.c_mainPgSelModule__c--c--cSel--cGroupBtns__link--cIcon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 1rem;
+}
+.c_mainPgSelModule__c--c--cSel--cGroupBtns__link--cIcon svg{
+    fill: #fff;
+    position: relative;
+    top: 3px;
+}
+
+/********* MEDIA QUERIES **********/
+@media (min-width: 768px){
+    .c_mainPgSelModule__c--c{
+        width: 95%;
+    }
+    .c_mainPgSelModule__c--c--cSel{
+        width: 95%;
+        margin: 25px auto 25px auto;
+        padding: 45px;
+    }
+    .c_mainPgSelModule__c--c--cSel--cLogo{
+        width: 98%;
+    }
+    .c_mainPgSelModule__c--c--cSel--cGroupBtns__link{
+        font-size: 1.25rem;
+        padding: 0.85rem 1.5rem;
+        line-height: 1.5;
+        max-width: 295px;
+    }
+}
+/***************************** NUEVO CSS - FIN *****************************/
