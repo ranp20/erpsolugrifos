@@ -27,7 +27,7 @@ $urlPlanVerde = $actual_link . "/erpsolugrifos/planverde";
     <div class="nav-wrapper cNav-wrapper cHTopNav__c__navWrapper">
       <ul class="nav navbar-nav cNav-wrapper__lft cHTopNav__c__navWrapper__lft">
         <li class="cNav-wrapper__lft--cBtnsTogg">
-          <a href="#" data-toggle-state="aside-collapsed" class="hidden-xs" title="colapsar menú">
+          <a href="#" data-toggle-state="aside-collapsed" class="hidden-xs" title="colapsar menú" id="toggMenuSidebarLeft">
             <em class="fa fa-navicon"></em>
           </a>
           <a href="#" data-toggle-state="aside-toggled" data-no-persist="true" class="visible-xs sidebar-toggle" title="expandir menú">

@@ -69,6 +69,8 @@ small span{
 	max-width: 50px;
 	width: 50px;
 }
+.d-none{display: none !important;}
+.d-block{display: block !important;}
 .color-paragraph{color: #656565;}
 .txt-underline{text-decoration: underline;}
 .aside-collapsed .sidebar > .nav .nav,
@@ -764,6 +766,52 @@ ul li.nav-item.active{
 			span{
 				font-size: 1.65rem;
 			}
+		}
+	}
+}
+// ------------- SIDEBARLEFT
+body{
+	&.collapse-menu{
+		& .aside.cSidLeftDash{
+			width: 70px;
+			& > .aside-inner{
+				width: 70px;
+				& .sidebar>.nav>li>.nav-item,
+				& .sidebar>.nav>li>a{
+					text-indent: -3px;
+					padding: 20px 0;
+					text-align: center;
+				}
+				& .user-block .user-block-info{
+					display: none;
+				}
+				& .sidebar>.nav>li>.nav-item>em,
+				& .sidebar>.nav>li>a>em{
+					font-size: 1.6rem !important;
+				}
+				& .sidebar>.nav>li>.nav-item>em:before,
+				& .sidebar>.nav>li>a>em:before{
+					font-size: 18.5px;
+				}
+				& .sidebar>.nav>li>a>span,
+				& .sidebar>.nav>li ul.nav>li>a>span{
+					display: none !important;
+				}
+			}
+		}
+		& .cHTopNav__c__header{
+			width: 70px !important;
+			& > a{
+				& > .cNav-header__link--cLogo{
+					display: none;
+				}
+				& > .cNav-header__link--cLogo--collapsed{
+					display: block;
+				}
+			}
+		}
+		& .wrapper > section{
+			margin-left: 70px !important;
 		}
 	}
 }
