@@ -8,7 +8,7 @@ class Categoria extends Admin_Controller{
     $data['title'] = "Categorías | PLAN VERDE";
     $data['page'] = "Categorías";
     $data['subview'] = $this->load->view('admin/categoria/manage_categoria', $data, TRUE);
-    $this->load->view('admin/_layout_main', $data); //page load    
+    $this->load->view('admin/_layout_main', $data);
   }
   // ------------------- MOSTRAR FORMULARIO DE CATEGORÍAS
   public function add_categoria($id = NULL){
@@ -28,7 +28,6 @@ class Categoria extends Admin_Controller{
       $this->datatables->column_search = array('tbl_categoria.nombre_categoria');
       $this->datatables->column_order = array(' ', 'tbl_categoria.nombre_categoria');
       $this->datatables->order = array('categoria_id' => 'desc');
-      // get all invoice
       if(!empty($type)){
         $where = array('tbl_categoria.categoria_id' => $type);
       }else{

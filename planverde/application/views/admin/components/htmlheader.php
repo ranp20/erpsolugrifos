@@ -15,10 +15,8 @@ function getExtension($file, $tolower=true){
 }
 /* VARIABLES DE AJUSTES GLOBALES */
 $admsett_icon_favicon = "";
-
 $admsett_icon_favicon = (config_item('favicon') != "") ?  base_url() . config_item('favicon') :  "http://placehold.it/16x16";
 $admsett_icon_favicon_ext = getExtension($admsett_icon_favicon);
-
 $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
 /*
 $url = $actual_link . "/";
@@ -64,9 +62,7 @@ $url = $actual_link . "/erpsolugrifos/";
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/dataTables/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/summernote/summernote.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/plugins/bootstrap-slider/bootstrap-slider.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo base_url() ?>assets/plugins/morris/morris.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/plugins/bootstrap-select/bootstrap-select.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo base_url() ?>assets/plugins/chat/chat.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo base_url() ?>asset/css/bootstrap-toggle.min.css" rel="stylesheet">
     <!-- PRELOADER -->
     <link rel="preload" href="<?php echo base_url(); ?>assets/js/jquery/jquery-3.6.4.min.js" as="script"/>

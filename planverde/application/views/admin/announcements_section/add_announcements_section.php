@@ -18,8 +18,7 @@
     </div>
   </div>
   <div class="form-group mt">
-    <label class="col-lg-3"></label>
-    <div class="col-lg-6">
+    <div class="col-lg-12 text-right">
       <?php if (isset($announcements_sec_info)) : ?>
         <button type="submit" class="btn btn-sm btn-primary">Actualizar</button>
       <?php else : ?>

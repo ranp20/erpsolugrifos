@@ -3,9 +3,6 @@
 <?php
 $id        = $this->uri->segment(5);
 $search_by = $this->uri->segment(4);
-$created   = can_action('4', 'created');
-$edited    = can_action('4', 'edited');
-$deleted   = can_action('4', 'deleted');
 ?>
 <div class="row">
   <div class="col-sm-12">

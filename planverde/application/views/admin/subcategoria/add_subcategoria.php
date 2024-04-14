@@ -10,14 +10,20 @@
   </div>
   <?php echo form_open(base_url('admin/subcategoria/save_subcategoria/' . (isset($subcategory_info) ? $subcategory_info->subcategoria_id : '')), array('id' => 'subcategoria', 'class' => 'form-horizontal', "enctype" => "multipart/form-data")); ?>
   <div class="form-group">
-    <label class="col-sm-3 control-label">Nombre</label>
-    <div class="col-sm-8">
+    <div class="col-sm-12">    
+      <label class="control-label">
+        <span>Nombre SubCategoría</span>
+        <span class="text-danger"> *</span>
+      </label>
       <input type="text" name="nombre_subcategoria" class="form-control" placeholder="Nombre de subcategoría" value="<?php echo (isset($subcategory_info->nombre_subcategoria)) ? $subcategory_info->nombre_subcategoria : ''; ?>" required>
     </div>
   </div>
   <div class="form-group">
-    <label class="col-lg-3 control-label"><?= ('Categoria') ?> </label>
-    <div class="col-sm-8">
+    <div class="col-sm-12">    
+      <label class="control-label">
+        <span><?= ('Categoria') ?></span>
+        <span class="text-danger"> *</span>
+      </label>
       <div class="input-group">
         <select name="categoria_id" class="form-control select_box" style="width: 100%" required>
           <option value="">Seleccione una categoría</option>
@@ -26,7 +32,7 @@
             foreach ($all_categories as $cate) {
               $cate = (object) $cate;
           ?>
-              <option value="<?= $cate->categoria_id ?>" <?php echo (isset($subcategory_info->categoria_id) && $subcategory_info->categoria_id == $cate->categoria_id) ? 'selected' : ''; ?>><?= $cate->nombre_categoria ?></option>
+            <option value="<?= $cate->categoria_id ?>" <?php echo (isset($subcategory_info->categoria_id) && $subcategory_info->categoria_id == $cate->categoria_id) ? 'selected' : ''; ?>><?= $cate->nombre_categoria ?></option>
           <?php
             }
           }
@@ -36,8 +42,8 @@
     </div>
   </div>
   <div class="form-group mt">
-    <label class="col-lg-3"></label>
-    <div class="col-lg-6">
+    <!-- <label class="col-lg-3"></label> -->
+    <div class="col-lg-12 text-right">
       <?php if (isset($subcategory_info)) : ?>
         <button type="submit" class="btn btn-sm btn-primary">Actualizar</button>
       <?php else : ?>
