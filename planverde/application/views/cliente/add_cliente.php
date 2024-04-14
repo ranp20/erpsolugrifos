@@ -1,27 +1,16 @@
 <?php
-
 use function GuzzleHttp\json_decode;
-
-include_once 'assets/admin-ajax.php'; ?>
-<?php echo message_box('success'); ?>
-<?php echo message_box('error'); ?>
+include_once 'assets/admin-ajax.php';
+?>
+<?php echo message_box('success');?>
+<?php echo message_box('error');?>
 <?php
 $user_id = $this->session->userdata('user_id');
 $profile_info = $this->db->where('user_id', $user_id)->get('tbl_account_details')->row();
-
 $user_info = $this->db->where('user_id', $user_id)->get('tbl_users')->row();
 $languages = $this->db->where('active', 1)->order_by('name', 'ASC')->get('tbl_languages')->result();
 $locales = $this->db->order_by('name')->get('tbl_locales')->result();
 ?>
-<style type="text/css">
-  #id_error_msg {
-    display: none;
-  }
-
-  .form-groups-bordered>.form-group {
-    padding-bottom: 0px
-  }
-</style>
 <div class="row">
   <div class="col-sm-1"></div>
   <div class="col-sm-10 wrap-fpanel" style="margin: 10px;">
@@ -31,8 +20,6 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
         <?= $title ?>
       </header>
       <?php echo form_open(base_url('admin/cliente/save_cliente/' . (isset($cliente_info) ? $cliente_info->cliente_id : '')), array('id' => 'cliente', 'class' => 'form-horizontal', "enctype" => "multipart/form-data")); ?>
-
-
       <div class="form-group">
         <div class="col-sm-8">
           <label class=" control-label"><?= ('Razon social') ?></label>
@@ -43,16 +30,12 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
           <input type="text" name="ruc" class="form-control" placeholder="NUMERO DE RUC" value="<?php echo (isset($cliente_info->ruc)) ? $cliente_info->ruc : ''; ?>" required>
         </div>
       </div>
-
-
       <div class="form-group">
         <div class="col-sm-8">
           <label class=" control-label">Direccion Legal</label>
           <input type="text" name="direccion_legal" class="form-control" placeholder="DIRECCION LEGAL" value="<?php echo (isset($cliente_info->direccion_legal)) ? $cliente_info->direccion_legal : ''; ?>" required>
         </div>
       </div>
-
-
       <div class="form-group">
         <div class="col-sm-6">
           <label class=" control-label">Distrito</label>
@@ -63,8 +46,6 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
           <input type="text" name="provincia" class="form-control" placeholder="PROVINCIA" value="<?php echo (isset($cliente_info->provincia)) ? $cliente_info->provincia : ''; ?>" required>
         </div>
       </div>
-
-
       <div class="form-group">
         <div class="col-sm-8">
           <label class=" control-label">Representante Legal</label>
@@ -75,7 +56,6 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
           <input type="text" name="dni_representante" class="form-control" placeholder="DNI REPRESENTANTE" value="<?php echo (isset($cliente_info->dni_representante)) ? $cliente_info->dni_representante : ''; ?>" required>
         </div>
       </div>
-
       <div class="form-group">
         <div class="col-sm-8">
           <label class=" control-label">Gerente Legal</label>
@@ -86,7 +66,6 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
           <input type="text" name="dni_gerente" class="form-control" placeholder="DNI GERENTE" value="<?php echo (isset($cliente_info->dni_gerente)) ? $cliente_info->dni_gerente : ''; ?>" required>
         </div>
       </div>
-
       <div class="form-group">
         <div class="col-sm-8">
           <label class=" control-label">Supervisor</label>
@@ -101,18 +80,13 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
           <input type="text" name="celular" class="form-control" placeholder="Celular Supervisor" value="<?php echo (isset($cliente_info->celular)) ? $cliente_info->celular : ''; ?>" required>
         </div>
       </div>
-
-          <?php
+        <?php
           $data_sede = json_decode( $cliente_info->sede_operativa );
           if( isset($cliente_info->sede_operativa) && count( $data_sede ) > 0 ){
             foreach( $data_sede as $key => $sede ):
-          ?>
-          
+        ?>
       <div class="panel panel-custom">
-        <header class="panel-heading ">
-         
-          Sede Operativa
-        </header>
+        <header class="panel-heading ">Sede Operativa</header>
         <div class="form-group">
           <div class="col-sm-8">
             <label class=" control-label">Direccion</label>
@@ -135,7 +109,6 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
             <label class=" control-label">Celular</label>
             <input type="text" name="celular_sede[]" class="form-control" placeholder="Celular" value="<?php echo (isset($sede->celular)) ? $sede->celular : ''; ?>" required>
           </div>
-
           <div class="col-sm-6">
             <label class=" control-label">Administrador</label>
             <input type="text" name="administrador_sede[]" class="form-control" placeholder="Administrador" value="<?php echo (isset($sede->administrador)) ? $sede->administrador : ''; ?>" required>
@@ -151,10 +124,7 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
           }else{
           ?>
           <div class="panel panel-custom">
-        <header class="panel-heading ">
-         
-          Sede Operativa
-        </header>
+        <header class="panel-heading">Sede Operativa</header>
         <div class="form-group">
           <div class="col-sm-8">
             <label class=" control-label">Direccion</label>
@@ -167,8 +137,7 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
           <div class="col-sm-4">
             <label class=" control-label">Provincia</label>
             <input type="text" name="provincia_sede[]" class="form-control" placeholder="Provincia" value="<?php echo (isset($sede->provincia)) ? $sede->provincia : ''; ?>" required>
-          </div>
-          
+          </div>          
           <div class="col-sm-4">
             <label class=" control-label">Correo</label>
             <input type="text" name="correo_sede[]" class="form-control" placeholder="Correo" value="<?php echo (isset($sede->correo)) ? $sede->correo : ''; ?>" required>
@@ -177,7 +146,6 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
             <label class=" control-label">Celular</label>
             <input type="text" name="celular_sede[]" class="form-control" placeholder="Celular" value="<?php echo (isset($sede->celular)) ? $sede->celular : ''; ?>" required>
           </div>
-
           <div class="col-sm-6">
             <label class=" control-label">Administrador</label>
             <input type="text" name="administrador_sede[]" class="form-control" placeholder="Administrador" value="<?php echo (isset($sede->administrador)) ? $sede->administrador : ''; ?>" required>
@@ -191,8 +159,6 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
           <?php
           }
           ?>
-
-
 
       <div class="form-group mt">
         <label class="col-lg-3"></label>

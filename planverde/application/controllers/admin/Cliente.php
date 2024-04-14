@@ -3,6 +3,7 @@ class Cliente extends Admin_Controller{
   public function __construct(){
     parent::__construct();
     $this->load->model('cliente_model');
+    $this->load->model('sede_model');
     $this->load->model('user_model');
     $this->load->model('account_model');
     // $this->load->model('clientrole_model');
@@ -40,22 +41,20 @@ class Cliente extends Admin_Controller{
       $this->datatables->column_order = array(' ', 'tbl_cliente.razon_social', 'tbl_cliente.ruc');
       $this->datatables->order = array('cliente_id' => 'desc');
       if(!empty($type)){
-          $where = null;
+        $where = null;
       }else{
-          $where = null;
+        $where = null;
       }
       $fetch_data = make_datatables($where);
       $data = array();
-      $edited = can_action('4', 'edited');
-      $deleted = can_action('4', 'deleted');
-      foreach ($fetch_data as $_key => $client){
+      foreach($fetch_data as $_key => $client){
         $action = null;
         $sub_array = array();
         $sub_array[] = $client->ruc;
         $sub_array[] = $client->razon_social;
         $sub_array[] = ($client->representante_legal != "") ? $client->representante_legal : "No especificado";
         $sub_array[] = ($client->gerente_legal != "") ? $client->gerente_legal : "No especificado";
-        $action .= '<a class="btn btn-primary bg-green btn-xs" data-toggle="modal" data-target="#myModal" title="Editar Clente" href="' . base_url() . 'admin/cliente/change_pass/' . $client->cliente_id . '"><span class="fa fa-lock"></span></a>' . ' ';
+        $action .= '<a class="btn btn-primary bg-green btn-xs" data-toggle="modal" data-target="#myModal" title="Cambiar contraseña" href="' . base_url() . 'admin/cliente/change_pass/' . $client->cliente_id . '"><span class="fa fa-lock"></span></a>' . ' ';
         $action .= '<a class="btn btn-info btn-xs" title="Editar Cliente" href="' . base_url() . 'admin/cliente/add_cliente/' . $client->cliente_id . '"><span class="fa fa-pencil"></span></a>' . ' ';
         $action .= '<button type="button" data-toggle="tooltip" data-placement="top" class="btn btn-danger btn-xs" title="Click para Eliminar " onclick="deleteClient('.$client->cliente_id.')"><span class="fa fa-trash-o"></span></button>' . ' ';
         $sub_array[] = $action;
@@ -99,13 +98,11 @@ class Cliente extends Admin_Controller{
   }
   // ------------------- GUARDAR CLIENTE
   public function save_cliente($id = NULL){
-    $created = (!empty($id) && $id != "") ? "update" : "insert";
-    $edited = true;
-    if($created == "insert"){
+    if(empty($id) || $id == "" || $id == NULL){
       // ------------- AGREGAR CLIENTE ------------- 
-      if(empty($id) && $this->db->where(['ruc' => $this->input->post('ruc')])->get('tbl_cliente')->row()){
-          set_message('error', 'Ruc ya esta registrada');
-          redirect('admin/cliente');
+      if($this->db->where(['ruc' => $this->input->post('ruc')])->get('tbl_cliente')->row()){
+        set_message('error', 'Ruc ya esta registrado'); // EL RUC YA EXISTE, POR ENDE NO SE DEBE GUARDAR EL USUARIO...
+        redirect('admin/cliente');
       }else{
         // VALIDAR PARA QUE SE AGREGUE AL MENOS UNA SEDE ANTES DE GUARDAR EL CLIENTE...
         $this->load->library('session');
@@ -115,6 +112,7 @@ class Cliente extends Admin_Controller{
           set_message('error', 'Necesita <strong>agregar al menos una sede</strong> para guardar el cliente');
           redirect('admin/cliente/add_cliente');
         }else{
+          // ------------------- 1. RECOGER LA INFORMACIÓN
           $razon_social = $this->input->post('razon_social');
           $ruc = $this->input->post('ruc');
           $direccion_legal = $this->input->post('direccion_legal');
@@ -126,7 +124,7 @@ class Cliente extends Admin_Controller{
           $gerente_legal = $this->input->post('gerente_legal');
           $dni_gerente = $this->input->post('dni_gerente');
           $email_gerente = $this->input->post('email_gerente');
-
+          // ------------------- 2. VALIDAR LA INFORMACIÓN
           $data['razon_social'] = (isset($razon_social) && $this->input->post('razon_social') != "") ? $this->input->post('razon_social') : '';
           $data['ruc'] = (isset($ruc) && $this->input->post('ruc') != "") ? $this->input->post('ruc') : '';
           $data['direccion_legal'] = (isset($direccion_legal) && $this->input->post('direccion_legal') != "") ? $this->input->post('direccion_legal') : '';
@@ -157,15 +155,15 @@ class Cliente extends Admin_Controller{
           $data['superv_collection'] = json_encode($superv_collection, TRUE);
           $sede = [];
           $data['sede_operativa'] = json_encode($sede);
-          // INSERTAR EN 'tbl_cliente'...
+          // ------------------- INSERTAR #1: 'tbl_cliente'...
           $this->cliente_model->_table_name = 'tbl_cliente';
           $this->cliente_model->_primary_key = "cliente_id";
           $client_id = $this->cliente_model->save($data, $id);
 
           // RECORRER LAS SEDES...
-          foreach ($_POST['direccion_sede_new'] as $key => $value){
+          foreach($_POST['direccion_sede_new'] as $key => $value){
             $permisos = [];
-            foreach( $_POST['permisos_new_'.$key] as $keyp => $permiso ){
+            foreach($_POST['permisos_new_'.$key] as $keyp => $permiso){
               $permisos[] = $permiso;
             }
             $data_sede = [
@@ -179,13 +177,13 @@ class Cliente extends Admin_Controller{
               'cliente_id'        => $client_id,
               'permission'        => json_encode($permisos)
             ];
-            // INSERTAR EN 'tbl_sedes'...
-            $this->cliente_model->_table_name = 'tbl_sedes';
-            $this->cliente_model->_primary_key = "sede_id";
+            // ------------------- INSERTAR #2: 'tbl_sedes'...
+            $this->sede_model->_table_name = 'tbl_sedes';
+            $this->sede_model->_primary_key = "sede_id";
             $sedeId = NULL;
-            $sede_id = $this->cliente_model->save($data_sede, $sedeId);
+            $sede_id = $this->sede_model->save($data_sede, $sedeId);
           }
-          // INSERTAR EN tbl_users...
+          // ------------------- INSERTAR #3: 'tbl_users'...
           $user = $data['ruc'];
           $password = hash('sha512', $data['ruc'] . config_item('encryption_key'));
           $data_user['client_id'] = $client_id; // PASAR EN ESTE CASO LA VARIABLE $client_id, YA QUE RECIÉN SE CREÓ EL USUARIO
@@ -195,27 +193,24 @@ class Cliente extends Admin_Controller{
           $data_user['password'] = $password;
           $this->db->insert('tbl_users', $data_user);
           $user_id = $this->db->insert_id();
-          // INSERTAR EN tbl_account_details...
+          // ------------------- INSERTAR #4: 'tbl_account_details'...
           $data_account['user_id'] = $user_id;
           $data_account['fullname'] = $data['razon_social'];
           $data_account['company'] = $client_id;
           $data_account['user_id'] = $user_id;
           $this->db->insert('tbl_account_details', $data_account);
           $account_id = $this->db->insert_id();
+          // ------------------- INSERTAR #5: 'tbl_client_role'...
           $this->db->insert('tbl_client_role', ['user_id' => $user_id, 'menu_id' => 17]);
 
           if($client_id){
-            $type = "success";
-            $message = 'Registro Exitoso';
+            $returnclient = ['action' => 'created','type' => "success",'message' => "Registro Exitoso", 'cliente_id' => $client_id];
           }else{
-            $type = "error";
-            $message = 'Registro Fallido';
+            $returnclient = ['action' => 'created','type' => "error",'message' => "Registro Fallido", 'cliente_id' => ''];
           }
-          set_message($type, $message);
-          redirect('admin/cliente');
         }
       }
-    }else if($created == "update"){
+    }else{
       // ------------- ACTUALIZAR CLIENTE -------------
       $validRucClient = "";
       $ruc_obtained = $this->input->post('ruc');
@@ -271,38 +266,48 @@ class Cliente extends Admin_Controller{
           $data['superv_collection'] = json_encode($superv_collection, TRUE);
           $sede = [];
           $data['sede_operativa'] = json_encode($sede);
-          
+          // ------------------- ACTUALIZAR #1: 'tbl_cliente'...
           $this->cliente_model->_table_name = 'tbl_cliente';
           $this->cliente_model->_primary_key = "cliente_id";
           $client_id = $this->cliente_model->save($data, $id);
-
+          // OBTENER EL ID DE LA SEDE PARA EL USUARIO A ACTUALIZAR...
+          // $data_detailsede = $this->db->select('sede_id')->where(['cliente_id' => $client_id])->get('tbl_sedes')->result_array();
+          // $countSedes = 0; // ESTE CONTADOR SE UTILIZA SI POR "A" O "B" SE CREARON MÁS SEDES DE MANERA ERRONEA...
           // RECORRER NUEVAS SEDES Y AGREGARLAS
-          foreach ($_POST['direccion_sede_new'] as $key => $value){
+          foreach($_POST['direccion_sede_new'] as $key => $value){
             $permisos = [];
-            foreach( $_POST['permisos_new_'.$key] as $keyp => $permiso ){
+
+            echo "<pre>";
+            print_r($_POST);
+            echo "</pre>";
+            // ----- NOTA: APLICAR OTRO MÉTODO DE ACTUALIZACIÓN, PARA VALIDAR LAS SEDES EXISTENTES Y LAS NUEVAS...
+
+            foreach($_POST['permisos_new_'.$key] as $keyp => $permiso){
               $permisos[] = $permiso;
             }
-            $data_sede = [
-              'direccion'         => $_POST['direccion_sede_new'][$key],
-              'distrito'          => $_POST['distrito_sede_new'][$key],
-              'provincia'         => $_POST['provincia_sede_new'][$key],
-              'correo'            => $_POST['correo_sede_new'][$key],
-              'celular'           => $_POST['celular_sede_new'][$key],
-              'administrador'     => $_POST['administrador_sede_new'][$key],
-              'administrador_sst' => $_POST['administrador_sst_sede_new'][$key],
-              'cliente_id'        => $client_id,
-              'permission'        => json_encode($permisos)
-            ];
-            $this->cliente_model->_table_name = 'tbl_sedes';
-            $this->cliente_model->_primary_key = "sede_id";
-            $sedeId = NULL;
-            $sede_id = $this->cliente_model->save($data_sede, $sedeId);
+            // $data_sede = [
+            //   'direccion'         => $_POST['direccion_sede_new'][$key],
+            //   'distrito'          => $_POST['distrito_sede_new'][$key],
+            //   'provincia'         => $_POST['provincia_sede_new'][$key],
+            //   'correo'            => $_POST['correo_sede_new'][$key],
+            //   'celular'           => $_POST['celular_sede_new'][$key],
+            //   'administrador'     => $_POST['administrador_sede_new'][$key],
+            //   'administrador_sst' => $_POST['administrador_sst_sede_new'][$key],
+            //   'cliente_id'        => $client_id,
+            //   'permission'        => json_encode($permisos)
+            // ];
+            // // ------------------- ACTUALIZAR #2: 'tbl_sedes'...
+            // $this->sede_model->_table_name = 'tbl_sedes';
+            // $this->sede_model->_primary_key = "sede_id";
+            // $sede_id = $this->sede_model->save($data_sede, $data_detailsede[$countSedes]['sede_id']);
+            // $countSedes++;
           }
+          exit();
           // LAS SIGUIENTES 2 LÍNEAS SON PROVICIONALES PARA PODER OBTENER EL ID DEL USUARIO Y ACTUALIZAR EL ID DEL CLIENTE EN tbl_users...
           $user_RUC = $this->input->post('ruc');
           $idUserByRUCClient = $this->db->query("SELECT user_id FROM tbl_users WHERE username = ".$user_RUC."")->result_array()[0]['user_id'];
           
-          // ACTUALIZAR EN LA TABLA tbl_users...
+          // ------------------- ACTUALIZAR #3: 'tbl_users'...
           $user = $data['ruc'];
           $password = hash('sha512', $data['ruc'] . config_item('encryption_key'));
           $data_user['client_id'] = $id;
@@ -313,7 +318,7 @@ class Cliente extends Admin_Controller{
           $this->user_model->_table_name = 'tbl_users';
           $this->user_model->_primary_key = "user_id";
           $user_id = $this->user_model->save($data_user, $idUserByRUCClient);
-          // ACTUALIZAR EN LA TABLA tbl_account_details...
+          // ------------------- ACTUALIZAR #4: 'tbl_account_details'...
           $data_account['user_id'] = $idUserByRUCClient;
           $data_account['fullname'] = $data['razon_social'];
           $data_account['company'] = $client_id;
@@ -323,18 +328,19 @@ class Cliente extends Admin_Controller{
           $accountdetails_id = $this->account_model->save($data_account, $idUserByRUCClient);
 
           if($client_id){
-            $type = "success";
-            $message = 'Registro Exitoso';
+            $returnclient = ['action' => 'updated','type' => "success",'message' => "Actualización Exitosa", 'cliente_id' => $client_id];
           }else{
-            $type = "error";
-            $message = 'Registro Fallido';
+            $returnclient = ['action' => 'updated','type' => "error",'message' => "Actualización Fallida", 'cliente_id' => ''];
           }
-          set_message($type, $message);
-          redirect('admin/cliente');
         }
       }
+    }
+
+    if($returnclient['action'] == "created"){
+      set_message($returnclient['type'], $returnclient['message']);
+      redirect('admin/cliente');
     }else{
-      set_message('error', 'No existe el cliente');
+      set_message($returnclient['type'], $returnclient['message']);
       redirect('admin/cliente');
     }
   }
@@ -361,7 +367,7 @@ class Cliente extends Admin_Controller{
       $data['celular']             = $this->input->post('celular');
 
       $sede = [];
-      foreach ($_POST['direccion_sede'] as $key => $value){
+      foreach($_POST['direccion_sede'] as $key => $value){
         $sede[] = [
           'direccion' => $_POST['direccion_sede'][$key],
           'distrito' => $_POST['distrito_sede'][$key],

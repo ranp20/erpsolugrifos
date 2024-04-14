@@ -1,4 +1,4 @@
-<a href="#" data-toggle="dropdown">
+<a href="#" data-toggle="dropdown" title="Notificaciones">
     <em class="icon-bell"></em>
     <?php
     if ($unread_notifications > 0) { ?>

@@ -27,22 +27,22 @@ $urlPlanVerde = $actual_link . "/erpsolugrifos/planverde";
     <div class="nav-wrapper cNav-wrapper cHTopNav__c__navWrapper">
       <ul class="nav navbar-nav cNav-wrapper__lft cHTopNav__c__navWrapper__lft">
         <li class="cNav-wrapper__lft--cBtnsTogg">
-          <a href="#" data-toggle-state="aside-collapsed" class="hidden-xs">
+          <a href="#" data-toggle-state="aside-collapsed" class="hidden-xs" title="colapsar menú">
             <em class="fa fa-navicon"></em>
           </a>
-          <a href="#" data-toggle-state="aside-toggled" data-no-persist="true" class="visible-xs sidebar-toggle">
+          <a href="#" data-toggle-state="aside-toggled" data-no-persist="true" class="visible-xs sidebar-toggle" title="expandir menú">
             <em class="fa fa-navicon"></em>
           </a>
         </li>
         <li class="hidden-xs cNav-wrapper__lft--cLogo">
-          <a href="" class="text-center">
+          <a href="" class="text-center" title="logo de menú colapsado">
             <img src="<?= $urlPlanVerde;?>/uploads/solugrifos.png" alt="logo_planverde" class="img-fluid" witdh="100" height="100" decoding="sync">
           </a>
         </li>
       </ul>
       <ul class="nav navbar-nav navbar-right cNav-wrapper__rgt cHTopNav__c__navWrapper__rgt">
         <li class="visible-lg">
-          <a href="#" data-toggle-fullscreen="" id="btn_admToggFullscreen" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Pantalla completa">
+          <a href="#" data-toggle-fullscreen="" id="btn_admToggFullscreen" data-toggle="tooltip" data-placement="bottom" title="pantalla completa" data-original-title="Pantalla completa">
             <!--<em class="fa fa-expand"></em>-->
             <!--<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M200 32H56C42.7 32 32 42.7 32 56V200c0 9.7 5.8 18.5 14.8 22.2s19.3 1.7 26.2-5.2l40-40 79 79-79 79L73 295c-6.9-6.9-17.2-8.9-26.2-5.2S32 302.3 32 312V456c0 13.3 10.7 24 24 24H200c9.7 0 18.5-5.8 22.2-14.8s1.7-19.3-5.2-26.2l-40-40 79-79 79 79-40 40c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8H456c13.3 0 24-10.7 24-24V312c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2l-40 40-79-79 79-79 40 40c6.9 6.9 17.2 8.9 26.2 5.2s14.8-12.5 14.8-22.2V56c0-13.3-10.7-24-24-24H312c-9.7 0-18.5 5.8-22.2 14.8s-1.7 19.3 5.2 26.2l40 40-79 79-79-79 40-40c6.9-6.9 8.9-17.2 5.2-26.2S209.7 32 200 32z"/></svg>-->
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M32 32C14.3 32 0 46.3 0 64v96c0 17.7 14.3 32 32 32s32-14.3 32-32V96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H64V352zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32h64v64c0 17.7 14.3 32 32 32s32-14.3 32-32V64c0-17.7-14.3-32-32-32H320zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V352z"/></svg>

@@ -190,7 +190,9 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
             <?php
             if (isset($sedes) && $sedes != "[]") {
               $data_sede = json_decode($sedes);
+              $countTotalSedes = 0;
               foreach ($data_sede as $key => $sede) :
+                // echo $key."<br>";
                 // $permission = json_decode( $sede->permission );
             ?>
               <div class="panel panel-custom sede-panel-new">
@@ -250,7 +252,6 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
                     <div class="row">
                         <?php
                         $permissions = json_decode($sede->permission, TRUE);
-
                         $data_categories = $this->db->get('tbl_categoria')->result_object();
 
                         foreach ($data_categories as $key => $cat) :
@@ -283,7 +284,7 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
                                     <label class="col-lg-8 control-label text-right"><?= $subcat->nombre_subcategoria ?></label>
                                     <!-- <span style="color: red !important;"><?php //echo $subcat->subcategoria_id ?></span> -->
                                     <div class="col-lg-4 checkbox">
-                                      <input class="permission-check" data-id="" data-toggle="toggle" name="permisos_<?php echo $sede->sede_id . '[]'; ?>" value="<?= $subcat->subcategoria_id ?>" <?php echo (!empty($permissions) && in_array($subcat->subcategoria_id, $permissions)) ? 'checked' : ''; ?> data-on="SI" data-off="NO" data-onstyle="success btn-xs" data-offstyle="danger btn-xs" type="checkbox">
+                                      <input class="permission-check" data-id="" data-toggle="toggle" name="permisos_new_<?php echo $countTotalSedes . '[]'; ?>" value="<?= $subcat->subcategoria_id ?>" <?php echo (!empty($permissions) && in_array($subcat->subcategoria_id, $permissions)) ? 'checked' : ''; ?> data-on="SI" data-off="NO" data-onstyle="success btn-xs" data-offstyle="danger btn-xs" type="checkbox">
                                     </div>
                                   </div>
                                 <?php
@@ -301,6 +302,7 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
                 </div>
               </div> 
             <?php
+              $countTotalSedes++;
               endforeach;
             }
             ?>
@@ -316,6 +318,7 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
           <div id="sedes">
             <div class="col-12" id="cScreenAny_sedes">
               <h3>No existe ninguna Sede</h3>
+              <input tabindex="-1" placeholder="phdr-whidipts" type="hidden" width="0" height="0" autocomplete="off" spellcheck="false" f-hidden="aria-hidden" class="non-visvalipt h-alternative-shwnon s-fkeynone-step" id="iptinvalid-forvalid_client" name="iptinvalid-forvalid_client" required>
             </div>
           </div>
         </div>

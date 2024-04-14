@@ -1,7 +1,29 @@
 $(() => {
-  var permiso = 0
+  $(document).ready(function(){
+    function verificarInputYBotonSubmit(){
+      var inputExists = $('#iptinvalid-forvalid_client').length > 0;
+      var submitButton = $('form#cliente').find('button[type="submit"], input[type="submit"]');
+      if (inputExists){
+        submitButton.prop('disabled', true);
+      } else {
+        submitButton.prop('disabled', false);
+      }
+    }
+    verificarInputYBotonSubmit();
+    var observer = new MutationObserver(function(mutationsList){
+      verificarInputYBotonSubmit();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  });
   $(document).on('click', '#new-sede', function(){
     $("#cScreenAny_sedes").remove();
+    var indSedes = 0;
+    if($(".sede-panel-new").length > 0){
+      $.each($(".sede-panel-new"), function(i,e){
+        // console.log(e);
+        indSedes++;
+      });
+    }
     $.ajax({
       type: "POST",
       url: base_url + 'admin/sede/form',
@@ -10,9 +32,8 @@ $(() => {
         $("#sedes").append(response);
       },
       complete: function(){
-        console.log('sis')
         $(".permisos").addClass('new_permission');
-        $('.new_permission').attr('name', 'permisos_new_' + permiso + '[]');
+        $('.new_permission').attr('name', 'permisos_new_' + indSedes + '[]');
         permiso += 1
         $(".permisos").removeClass('new_permission');
         $(".permisos").removeClass('permisos');
@@ -28,10 +49,11 @@ $(() => {
       }else{
         $("#sedes").html(`<div class="col-12" id="cScreenAny_sedes">
           <h3>No existe ninguna Sede</h3>
+          <input tabindex="-1" placeholder="phdr-whidipts" type="hidden" width="0" height="0" autocomplete="off" spellcheck="false" f-hidden="aria-hidden" class="non-visvalipt h-alternative-shwnon s-fkeynone-step" id="iptinvalid-forvalid_client" name="iptinvalid-forvalid_client" required>
         </div>`);
       }
     }    
-  });  
+  });
   $(document).on('change', '.permissions-all', function(){
     console.log($(this));
     let el = $(this), 
@@ -52,7 +74,7 @@ $(() => {
     });
   });
   
-  $(document).on('change', '.permissions-all-new', function() {
+  $(document).on('change', '.permissions-all-new', function(){
     let el = $(this), check = el.parent().parent().parent().parent().find('.permission-check-new');
     $.each(check, function(i,v){
       item = $(this);

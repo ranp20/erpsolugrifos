@@ -29,6 +29,12 @@ a{
 // 		opacity: 0;
 // 	}
 // }
+#id_error_msg {
+	display: none !important;
+}
+.form-groups-bordered>.form-group {
+	padding-bottom: 0px !important;
+}
 ul{
 	list-style: none;
 	padding: 0;
