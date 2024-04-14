@@ -69,6 +69,7 @@ $deleted = can_action('4', 'deleted');
     </div>
   </div>
 </div>
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/back/adm_cliente.js"></script>
 <script type="text/javascript">
   function is_json(str){
     try{

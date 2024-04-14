@@ -23,29 +23,30 @@ class Login_Model extends MY_Model{
             'password' => $this->hash($this->input->post('password', true)),
         ), TRUE);
 
-        // COMPROBAR SI EL USUARIO SIGUE CON CUENTA VIGENTE O SI FUE SUSPENDIDO/"BANEADO"
+        // ------------------- COMPROBAR SI EL USUARIO SIGUE CON CUENTA VIGENTE O SI FUE SUSPENDIDO/"BANEADO"
         if (!empty($getUser) && $getUser->activated == 1 && $getUser->banned == 0){
             $url = $this->session->userdata('url');
-            // VARIABLES GLOBALES DE LA TABLA "SETTINGS"...
+            // ------------------- VARIABLES GLOBALES DE LA TABLA "SETTINGS"...
             $settg_directiontext = (config_item('RTL') != 0 && config_item('RTL') != "") ? config_item('RTL') : "ltr";
-            // OBTENER DATOS DE LA TABLA
+            // ------------------- OBTENER DATOS DE LA TABLA
             $user_info = $this->check_by(array('user_id' => $getUser->user_id), 'tbl_account_details');
-            // VALIDAR SI EXISTE DATOS DEL USUARIO EN LA TABLA 'tbl_account_details'
+            // ------------------- VALIDAR SI EXISTE DATOS DEL USUARIO EN LA TABLA 'tbl_account_details'
             if(!empty($user_info)){
-                // COMPROBAR SI EL USUARIO TIENE SETEADO EL CAMPO "direction" para cambiar la horientación horizontal de la pantalla (POCO ÚTIL)
+                // ------------------- COMPROBAR SI EL USUARIO TIENE SETEADO EL CAMPO "direction" para cambiar la horientación horizontal de la pantalla (POCO ÚTIL)
                 $direction = (!empty($user_info->direction)) ? $direction = 'rtl' : $direction = $settg_directiontext;
-                // SI EL ROL ES DIFERENTE DE 2, EL SISTEMA COMPRUEBA EL CONTROL DE ASISTENCIA, 
-                // ESTO CON EL FIN DE LLEVAR UN CONTROL DE ACCESO PARECIDO AL DATO "Último acceso" MAS NO IGUAL (POCO ÚTIL)
+                // ------------------- SI EL ROL ES DIFERENTE DE 2, EL SISTEMA COMPRUEBA EL CONTROL DE ASISTENCIA, 
+                // ------------------- ESTO CON EL FIN DE LLEVAR UN CONTROL DE ACCESO PARECIDO AL DATO "Último acceso" MAS NO IGUAL (POCO ÚTIL)
+                // ------------------- ADMINISTRADOR (role_id = 1)
                 if ($getUser->role_id != '2'){
-                    $mark_attendance = $this->input->post('mark_attendance', true); // Marcar asistencia por defecto (TRUE o FALSE) (POCO ÚTIL)
+                    $mark_attendance = $this->input->post('mark_attendance', true); // ------------------- Marcar asistencia por defecto (TRUE o FALSE) (POCO ÚTIL)
                     if (!empty($mark_attendance)){
                         $user_id = $getUser->user_id;
-                        $attendance_info = $this->db->where('user_id', $user_id)->get('tbl_attendance')->result(); // Asistencia de usuario
-                        // BUSCAR EN EL REGISTRO DE HORAS POR EL ID DE ASISTENCIA...
+                        $attendance_info = $this->db->where('user_id', $user_id)->get('tbl_attendance')->result(); // ------------------- Asistencia de usuario
+                        // ------------------- BUSCAR EN EL REGISTRO DE HORAS POR EL ID DE ASISTENCIA...
                         foreach ($attendance_info as $v_info){
                             $all_clocking[] = $this->admin_model->check_by(array('attendance_id' => $v_info->attendance_id, 'clocking_status' => 1), 'tbl_clock');
                         }
-                        // RECORRER LAS HORAS Y GUARDAR SI EXISTE ALGÚN REGISTRO PREVIO...
+                        // ------------------- RECORRER LAS HORAS Y GUARDAR SI EXISTE ALGÚN REGISTRO PREVIO...
                         if (!empty($all_clocking)){
                             foreach ($all_clocking as $v_clocking){
                                 if (!empty($v_clocking)){
@@ -53,7 +54,7 @@ class Login_Model extends MY_Model{
                                 }
                             }
                         }
-                        // VALIDAR SI EXISTE ALGÚN REGISTRO DE HORAS Y SETEARLO EN LA VARIABLE GLOBAL DE HORA
+                        // ------------------- VALIDAR SI EXISTE ALGÚN REGISTRO DE HORAS Y SETEARLO EN LA VARIABLE GLOBAL DE HORA
                         if (!empty($clocking)){
                             $this->set_clocking($clocking->clock_id, $getUser->user_id, 0, true);
                             $clock_in = 'clock_out_message';
@@ -88,6 +89,7 @@ class Login_Model extends MY_Model{
                     );
                     $this->session->set_userdata($data); // SETEAR EN $this->session->userdata();
                 } else {
+                // ------------------- CLIENTES (role_id = 2)
                     if (empty($url)){
                         $client_menu = $this->global_model->select_client_roll($getUser->user_id);
                         $url = $client_menu[0]->link;

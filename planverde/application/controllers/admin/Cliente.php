@@ -67,11 +67,9 @@ class Cliente extends Admin_Controller{
   }
   public function change_pass($id = NULL){
     $_SESSION['id_cliente_pass'] = $id;
-    $data['title'] = 'Nueva Contraseña';
-    $data['page'] = 'cliente';
-    if (!empty($id)){
-    $data['cliente_info'] =  $this->db->get_where('tbl_cliente', ['cliente_id' => $id])->row();
-    $data['sedes'] = json_encode($this->db->get_where('tbl_sedes', ['cliente_id' => $id])->result_array());
+    if(!empty($id)){
+      $data['cliente_info'] = $this->db->get_where('tbl_cliente', ['cliente_id' => $id])->row();
+      $data['sedes'] = json_encode($this->db->get_where('tbl_sedes', ['cliente_id' => $id])->result_array());
     }
     $data['cliente_id'] = $id;
     $data['subview'] = $this->load->view('admin/cliente/form_change_pass', $data);
@@ -81,19 +79,17 @@ class Cliente extends Admin_Controller{
     return hash('sha512', $string . config_item('encryption_key'));
   }
   public function set_password(){
-    $user_id = $this->db->where(['company' => $_SESSION['id_cliente_pass'] ])->get('tbl_account_details')->row()->user_id;
+    $user_id = $this->db->where(['client_id' => $_SESSION['id_cliente_pass'] ])->order_by('user_id', 'DESC')->limit(1)->get('tbl_users')->row()->user_id;
     if($this->input->post('new_password') === $this->input->post('confirm_password')){
       $data['password'] = $this->hash($this->input->post('new_password'));
-      $this->cliente_model->_table_name = 'tbl_users';
-      $this->cliente_model->_primary_key = 'user_id';
-      $this->cliente_model->save($data, $user_id);
-      $type = "success";
-      $message = 'Contraseña Cambiada';
+      $this->user_model->_table_name = 'tbl_users';
+      $this->user_model->_primary_key = 'user_id';
+      $return_id = $this->user_model->save($data, $user_id);
+      $returnsetpass = ['action' => 'updated','type' => "success",'message' => "Contraseña actualizada",'user_id' => $return_id];
     }else{
-      $type = "error";
-      $message = 'Verifique la contraseña debe coincidir';
+      $returnsetpass = ['action' => 'updated','type' => "error",'message' => "Verifique que las contraseñas coincidan",'user_id' => ''];
     }
-    set_message($type, $message);
+    set_message($returnsetpass['type'], $returnsetpass['message']);
     redirect('admin/cliente');
   }
   // ------------------- GUARDAR CLIENTE
@@ -277,9 +273,9 @@ class Cliente extends Admin_Controller{
           foreach($_POST['direccion_sede_new'] as $key => $value){
             $permisos = [];
 
-            echo "<pre>";
-            print_r($_POST);
-            echo "</pre>";
+            // echo "<pre>";
+            // print_r($_POST);
+            // echo "</pre>";
             // ----- NOTA: APLICAR OTRO MÉTODO DE ACTUALIZACIÓN, PARA VALIDAR LAS SEDES EXISTENTES Y LAS NUEVAS...
 
             foreach($_POST['permisos_new_'.$key] as $keyp => $permiso){
@@ -302,7 +298,7 @@ class Cliente extends Admin_Controller{
             // $sede_id = $this->sede_model->save($data_sede, $data_detailsede[$countSedes]['sede_id']);
             // $countSedes++;
           }
-          exit();
+          // exit();
           // LAS SIGUIENTES 2 LÍNEAS SON PROVICIONALES PARA PODER OBTENER EL ID DEL USUARIO Y ACTUALIZAR EL ID DEL CLIENTE EN tbl_users...
           $user_RUC = $this->input->post('ruc');
           $idUserByRUCClient = $this->db->query("SELECT user_id FROM tbl_users WHERE username = ".$user_RUC."")->result_array()[0]['user_id'];
