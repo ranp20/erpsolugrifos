@@ -102,33 +102,6 @@ if (!empty($realtime_notification)) { ?>
     <?php include_once 'assets/plugins/dataTables/js/dataTables.php'; ?>
 <?php } ?>
 <?php
-$profile = profile();
-$chat = false;
-if (!empty($profile)) {
-    $role = $profile->role_id;
-    if ($role == 2) { // check client menu permission
-        $chat_menu = get_row('tbl_client_role', array('user_id' => $profile->user_id, 'menu_id' => '19'));
-        if (!empty($chat_menu)) {
-            $chat = true;
-        }
-        $this->view = 'client/';
-    } elseif ($role != 1) {// check staff menu permission
-        if (!empty($profile->designations_id)) {
-            $user_menu = get_row('tbl_user_role', array('designations_id' => $profile->designations_id, 'menu_id' => '139'));
-            if (!empty($user_menu)) {
-                $chat = true;
-            }
-        }
-    } else if ($role == 1) {
-        $chat = true;
-    }
-}
-if (!empty($chat)) {
-    ?>
-    <!--star live_chat_section-->
-    <?php $this->load->view('chat/chat_list') ?>
-<?php } ?>
-<?php
 $wtps_number = str_replace(" ", "", config_item('socialnetwork_whatsapp_telephonenumber'));
 $wtps_text = config_item('socialnetwork_whatsapp_textsendmessage');
 ?>

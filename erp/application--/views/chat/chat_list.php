@@ -3,7 +3,6 @@ $frontend = $this->uri->segment(1);
 $mid = my_id();
 if (!empty($mid) && $frontend != 'frontend') { ?>
     <div class="chat_frame">
-        <?php include_once 'assets/plugins/chat/chat.php'; ?>
         <button type="button" class="btn btn-round custom-bg" id="open_chat_list"><span
                 class="fa fa-comments"></span></button>
         <div class="panel b0" id="chat_list">

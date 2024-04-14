@@ -883,3 +883,9 @@ body{
 		z-index: 99999 !important;
 	}
 }
+.chat_frame{
+	z-index: 99999;
+	top: 10px;
+	position: fixed !important;
+	background-color: red !important;
+}

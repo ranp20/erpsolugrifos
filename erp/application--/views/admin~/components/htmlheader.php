@@ -84,7 +84,6 @@
 
     <!--- bootstrap-select ---->
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/plugins/bootstrap-select/bootstrap-select.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo base_url() ?>assets/plugins/chat/chat.min.css" rel="stylesheet">
 
     <!-- JQUERY-->
     <script type="text/javascript" src="<?= base_url() ?>assets/js/jquery.min.js"></script>
