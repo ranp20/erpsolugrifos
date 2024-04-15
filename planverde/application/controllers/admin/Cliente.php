@@ -65,6 +65,7 @@ class Cliente extends Admin_Controller{
       redirect('admin/dashboard');
     }
   }
+  // ------------------- ABRIR Y MANDAR LOS DATOS DEL CLIENTE AL MODAL DE CAMBIO DE CONTRASEÑA
   public function change_pass($id = NULL){
     $_SESSION['id_cliente_pass'] = $id;
     if(!empty($id)){
@@ -75,9 +76,11 @@ class Cliente extends Admin_Controller{
     $data['subview'] = $this->load->view('admin/cliente/form_change_pass', $data);
     $this->load->view('admin/_layout_modal', $data);
   }
+  // ------------------- ESTRUCTURA HASH PARA LAS CONTRASEÑAS
   public function hash($string){
     return hash('sha512', $string . config_item('encryption_key'));
   }
+  // ------------------- ACTUALIZAR CONTRASEÑA DEL CLIENTE
   public function set_password(){
     $user_id = $this->db->where(['client_id' => $_SESSION['id_cliente_pass'] ])->order_by('user_id', 'DESC')->limit(1)->get('tbl_users')->row()->user_id;
     if($this->input->post('new_password') === $this->input->post('confirm_password')){
@@ -464,52 +467,6 @@ class Cliente extends Admin_Controller{
           }
         }else{
           $data = ['type' => 'error','message' => 'Ocurrio un Error al Eliminar el Registro.'];
-        }
-      }else{
-        $data = ['type' => 'error','message' => 'Registro no existe'];
-      }
-    }else{
-      $data = ['type' => 'error','message' => 'Error al eliminar Registro'];
-    }
-    echo json_encode($data);
-    die();
-  }
-  /******************************* NUEVO CONTENIDO (INICIO) *******************************/
-  public function change_password($password = NULL){
-    if(isset($password)){        
-      echo "<pre>";
-      print_r($_POST);
-      echo "</pre>";
-      exit();
-      /*
-      $_SESSION['id_cliente_pass'] = $id;
-      $user_id = $this->db->where(['company' => $_SESSION['id_cliente_pass'] ])->get('tbl_account_details')->row()->user_id;
-      */
-      
-      /* $password = $this->hash($this->input->post('old_password', TRUE));
-      $check_old_pass = $this->admin_model->check_by(array('password' => $password), 'tbl_users'); */
-
-      /*
-      if($this->input->post('new_password') === $this->input->post('confirm_password')){
-          $data['password'] = $this->hash($this->input->post('new_password'));
-          $this->cliente_model->_table_name = 'tbl_users';
-          $this->cliente_model->_primary_key = 'user_id';
-          $this->cliente_model->save($data, $user_id);
-          $type = "success";
-          $message = 'Contraseña Cambiada';
-      }else{
-          $type = "error";
-          $message = 'Verifique la contraseña debe coincidir';
-      }
-      set_message($type, $message);
-      redirect('admin/cliente'); //redirect page
-      */
-      $getDataclient = $this->db->where('anio_id', $password)->get('tbl_anio')->row();
-      if(count($getDataclient) > 0){
-        if($this->db->where('anio_id', $password)->delete('tbl_anio')){
-          $data = ['type' => 'success','message' => 'Registro Eliminado con Exito!!'];
-        }else{
-          $data = ['type'    => 'error','message' => 'Ocurrio un Error al Eliminar el Registro.'];
         }
       }else{
         $data = ['type' => 'error','message' => 'Registro no existe'];

@@ -30,15 +30,9 @@ class Anio extends Admin_Controller{
       $this->datatables->column_search = array('tbl_anio.anio');
       $this->datatables->column_order = array(' ', 'tbl_anio.anio');
       $this->datatables->order = array('anio_id' => 'desc');
-      if(!empty($type)){
-        $where = array('tbl_anio.anio_id' => $type);
-      }else{
-        $where = null;
-      }
+      $where = (!empty($type)) ? array('tbl_anio.anio_id' => $type) : null;
       $fetch_data = make_datatables($where);
       $data = array();
-      $edited = can_action('4', 'edited');
-      $deleted = can_action('4', 'deleted');
       foreach($fetch_data as $_key => $anio){
         $action = null;
         $sub_array = array();
