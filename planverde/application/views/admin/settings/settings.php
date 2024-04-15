@@ -21,18 +21,18 @@
                         </a>
                     </li>
                 <?php  } ?>
-                <?php /*
+                <?php 
                 $can_do = can_do(120);
-                if (!empty($can_do)) { */ ?>
-                <!--
-                    <li class="cSettgs__c__cGrpLinks__m--itm <?php // echo ($load_setting == 'social_networks') ? 'active' : ''; ?>">
-                        <a class="cSettgs__c__cGrpLinks__m--link" href="<?php // echo base_url() ?>admin/settings/social_networks">
+                if (!empty($can_do)) {  ?>
+                
+                    <li class="cSettgs__c__cGrpLinks__m--itm <?php  echo ($load_setting == 'social_networks') ? 'active' : ''; ?>">
+                        <a class="cSettgs__c__cGrpLinks__m--link" href="<?php  echo base_url() ?>admin/settings/social_networks">
                             <i class="fa fa-fw fa-code"></i>
-                            <?php // echo lang('social_networks_settings') ?>
+                            <?php  echo lang('social_networks_settings') ?>
                         </a>
                     </li>
-                -->
-                <?php /* } */ ?>
+               
+                <?php  } ?>
             </ul>
         </div>
         <section class="cSettgs__c__cRefsLinksItems col-sm-9">

@@ -1,7 +1,4 @@
 <?php
-// CADA CATEGORIA Y SUB CATEGORIA A L REGISTRAR O ACTUALIZAR SU NOMBRE DEBE CREAR UNA CARPETA Y/O SUBCARPETA 
-// AL CREAR EL AÑO  JALAREMOS LAS CATEGORIAS Y SUBCATEGORIAS PARA CREAR DENTRO DE CADA SUBCATEGORIA LA CARPETA CON EL AÑO Q SE ESTA GUARDANDO
-// verificaremos las carpetad tanto de categoria como subcategoria previo a la creacion de carpeta año
 class Anuncio extends Admin_Controller{
   public function __construct(){
     parent::__construct();
@@ -136,6 +133,7 @@ class Anuncio extends Admin_Controller{
       redirect('admin/anuncio');
     }
   }
+  // ------------------- ACTIVAR/DESACTIVAR ANUNCIO
   function active($id, $status){
     if(isset($id) && $id > 0 && isset($status)){
       $st_chck = ($status == "on") ? 1 : 0;
@@ -143,51 +141,34 @@ class Anuncio extends Admin_Controller{
       if(count($data_anuncio) > 0){
         $this->db->where('anuncio_id', $id);
         if($this->db->update('tbl_anuncios', ['status' => $st_chck])){
-          $data['type'] = 'success';
-          $data['message'] = 'Anuncio Actualizado';
+          $data = ['type' => 'success','message' => 'Anuncio Actualizado'];
         }else{
-          $data['type'] = 'error';
-          $data['message'] = 'Anuncio  no Actualizado';
+          $data = ['type' => 'error','message' => 'Error al actualizar(A)'];
         }
       }else{
-        $data['type'] = 'error';
-        $data['message'] = 'Anuncio  no Actualizado';
+        $data = ['type' => 'error','message' => 'Error al actualizar(B)'];
       }            
     }else{
-      $data['type'] = 'error';
-      $data['message'] = 'Anuncio  no Actualizado';
+      $data = ['type' => 'error','message' => 'Error al actualizar(C)'];
     }
     echo json_encode($data);
     die();
   }
-
-  /******************************* NUEVO CONTENIDO (INICIO) *******************************/
+  // ------------------- ELIMINAR ANUNCIO
   public function delete_anuncio($id = NULL){
     if(isset($id)){
       $data_anuncio = $this->db->where('anuncio_id', $id)->get('tbl_anuncios')->row();
       if(count($data_anuncio) > 0){
         if($this->db->where('anuncio_id', $id)->delete('tbl_anuncios')){
-          $data = [
-            'type'    => 'success',
-            'message' => 'Registro Eliminado con Exito!!'
-          ];
+          $data = ['type' => 'success','message'=>'Registro Eliminado con Exito!!'];
         }else{
-          $data = [
-            'type'    => 'error',
-            'message' => 'Ocurrio un Error al Eliminar el Registro.'
-          ];
+          $data = ['type' => 'error','message' =>'Ocurrio un Error al Eliminar el Registro.'];
         }
       }else{
-        $data = [
-          'type'    => 'error',
-          'message' => 'Registro no existe'
-        ];
+        $data = ['type' => 'error','message' => 'Registro no existe'];
       }
     }else{
-      $data = [
-        'type'    => 'error',
-        'message' => 'Error al eliminar Registro'
-      ];
+      $data = ['type' => 'error','message' => 'Error al eliminar Registro'];
     }
     echo json_encode($data);
     die();

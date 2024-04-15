@@ -8,7 +8,7 @@ class Announcements_section extends Admin_Controller{
     $data['title'] = "Secciones de Anuncios | PLAN VERDE";
     $data['page'] = "Secciones de anuncios";
     $data['subview'] = $this->load->view('admin/announcements_section/index', $data, TRUE);
-    $this->load->view('admin/_layout_main', $data); //page load
+    $this->load->view('admin/_layout_main', $data);
   }
   public function add_announcements_section($id = NULL){
     $data['title'] = 'Agregar Sección';

@@ -1,11 +1,7 @@
 <?php
 $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
-/*
-$url =  $actual_link . "/";
-*/
-
+// $url =  $actual_link . "/";
 $url =  $actual_link . "/erpsolugrifos/";
-
 ?>
 <script type="text/javascript" src="<?php echo $url; ?>node_modules/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script>
 <link rel="stylesheet" href="<?php echo $url; ?>node_modules/@fancyapps/ui/dist/fancybox/fancybox.css"/>
