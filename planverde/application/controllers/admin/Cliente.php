@@ -343,94 +343,22 @@ class Cliente extends Admin_Controller{
       redirect('admin/cliente');
     }
   }
-  /*
-  public function update_cliente($id){
-    $created = true;
-    $edited = true;
-    if (!empty($edited)){
-      if ($this->db->where(['ruc' => $this->input->post('ruc')])->get('tbl_cliente')->row()){
-        set_message('error', 'Ruc ya esta registrada');
-        redirect('admin/cliente');
-      }
-      $data['razon_social']        = $this->input->post('razon_social');
-      $data['ruc']                 = $this->input->post('ruc');
-      $data['direccion_legal']     = $this->input->post('direccion_legal');
-      $data['distrito']            = $this->input->post('distrito');
-      $data['provincia']           = $this->input->post('provincia');
-      $data['representante_legal'] = $this->input->post('representante_legal');
-      $data['dni_representante']   = $this->input->post('dni_representante');
-      $data['gerente_legal']       = $this->input->post('gerente_legal');
-      $data['dni_gerente']         = $this->input->post('dni_gerente');
-      $data['supervisor']          = $this->input->post('supervisor');
-      $data['correo']              = $this->input->post('correo');
-      $data['celular']             = $this->input->post('celular');
-
-      $sede = [];
-      foreach($_POST['direccion_sede'] as $key => $value){
-        $sede[] = [
-          'direccion' => $_POST['direccion_sede'][$key],
-          'distrito' => $_POST['distrito_sede'][$key],
-          'provincia' => $_POST['provincia_sede'][$key],
-          'correo' => $_POST['correo_sede'][$key],
-          'celular' => $_POST['celular_sede'][$key],
-          'administrador' => $_POST['administrador_sede'][$key],
-          'administrador_sst' => $_POST['administrador_sst_sede'][$key]
-        ];
-      }
-      $data['sede_operativa'] = json_encode($sede);
-
-      $this->cliente_model->_table_name = 'tbl_cliente';
-      $this->cliente_model->_primary_key = "cliente_id";
-      $client_id = $this->cliente_model->save($data, $id);
-
-      // VRIFICAR EL USUARIO DEPENDIENDO DEL tbl_account_details
-      $user = $data['ruc'];
-      $password = hash('sha512', $data['ruc'] . config_item('encryption_key'));
-      $data_user['role_id'] = '2';
-      $data_user['activated'] = '1';
-      $data_user['username'] = $user;
-      $data_user['password'] = $password;
-      $this->db->insert('tbl_users', $data_user);
-      $user_id = $this->db->insert_id();
-
-      // REGISTRAMOS EL tbl_account_details
-      $data_account['user_id'] = $user_id;
-      $data_account['fullname'] = $data['razon_social'];
-      $data_account['company'] = $client_id;
-      $data_account['user_id'] = $user_id;
-      $this->db->insert('tbl_account_details', $data_account);
-      $account_id = $this->db->insert_id();
-      $this->db->insert('tbl_client_role', ['user_id' => $user_id, 'menu_id' => 17]);
-
-      if($user_id && $client_id && $account_id){
-        $type = "success";
-        $message = 'Registro Exitoso';
-      } else {
-        $type = "error";
-        $message = 'Registro Fallido';
-      }
-      set_message($type, $message);
-      redirect('admin/cliente');
-    }
-  }
-  */
   // ------------------- ELIMINAR CLIENTE
   public function delete_client($id = NULL){
-    if(isset($id)){
-      $getDataclient = $this->db->where('cliente_id', $id)->get('tbl_cliente')->row();
-      $cli_ruc = (isset($getDataclient->ruc) && $getDataclient->ruc != "") ? $getDataclient->ruc : "";
-      $getDataUsers = $this->db->where('username', $cli_ruc)->get('tbl_users')->row(); // ELIMINAR DE 'tbl_users'
-      $getDataAccountDetails = $this->db->where('user_id', $getDataclient->cliente_id)->get('tbl_account_details')->row(); // ELIMINAR DE 'tbl_account_details'
-      $getDataSedes = $this->db->where('cliente_id', $getDataclient->cliente_id)->get('tbl_sedes')->row(); // ELIMINAR DE 'tbl_sedes'
-      $getDataClientRole = $this->db->where('user_id', $getDataclient->cliente_id)->get('tbl_client_role')->row(); // ELIMINAR DE 'tbl_client_role'
-      /*
+    if(!empty($id) || $id != "" || $id != NULL){
+      $getDataclient = $this->db->select('cliente_id, ruc')->where('cliente_id', $id)->get('tbl_cliente')->row();
+      $getDataSedes = $this->db->select('sede_id')->where('cliente_id', $getDataclient->cliente_id)->get('tbl_sedes')->row(); // ELIMINAR DE 'tbl_sedes'
+      $getDataUser = $this->db->select('client_id')->where('client_id', $getDataclient->cliente_id)->order_by('user_id', 'DESC')->limit(1)->get('tbl_users')->row(); // ELIMINAR DE 'tbl_users'
+      $getDataAccountDetails = $this->db->select('account_details_id')->where('user_id', $getDataclient->cliente_id)->get('tbl_account_details')->row(); // ELIMINAR DE 'tbl_account_details'
+      $getDataClientRole = $this->db->select('client_role_id')->where('user_id', $getDataclient->cliente_id)->get('tbl_client_role')->row(); // ELIMINAR DE 'tbl_client_role'
+      
       echo "tbl_cliente <br>";
       echo "<pre>";
       print_r($getDataclient);
       echo "</pre>";
       echo "tbl_users <br>";
       echo "<pre>";
-      print_r($getDataUsers);
+      print_r($getDataUser);
       echo "</pre>";
       echo "tbl_account_details <br>";
       echo "<pre>";
@@ -445,11 +373,12 @@ class Cliente extends Admin_Controller{
       print_r($getDataClientRole);
       echo "</pre>";
       exit();
-      */
-      if(count($getDataclient) > 0 && count($getDataUsers) > 0 && count($getDataAccountDetails) > 0 && count($getDataSedes) > 0 && count($getDataClientRole) > 0){
+      
+      if(count($getDataclient) > 0 && count($getDataUser) > 0 && count($getDataAccountDetails) > 0 && count($getDataSedes) > 0 && count($getDataClientRole) > 0){
         if($this->db->where('cliente_id', $id)->delete('tbl_cliente')){
-          if($this->db->where('username', $cli_ruc)->delete('tbl_users')){
+          if($this->db->where('client_id', $getDataclient->cliente_id)->delete('tbl_users')){
             if($this->db->where('user_id', $getDataclient->cliente_id)->delete('tbl_account_details')){
+              // ------ NOTA: RECORRER LAS SEDES, VALIDAR EL DELETE DE ESTOS Y COLOCAR DENTRO EL DELETE PARA 'tbl_client_role'
               if($this->db->where('cliente_id', $getDataclient->cliente_id)->delete('tbl_sedes')){
                 if($this->db->where('user_id', $getDataclient->cliente_id)->delete('tbl_client_role')){
                   $data = ['type' => 'success','message' => 'Registro Eliminado con Exito!!','state_mssg' => 'Todos los datos del cliente en otras tablas han sido eliminadas'];
