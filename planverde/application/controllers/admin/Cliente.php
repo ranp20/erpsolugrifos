@@ -18,7 +18,7 @@ class Cliente extends Admin_Controller{
   public function add_cliente($id = NULL){
     $data['title'] = 'Agregar cliente';
     $data['page'] = 'cliente';
-    if (!empty($id)){
+    if(!empty($id)){
       $data['title'] = 'Actualizar cliente';
       $data['cliente_info'] =  $this->db->get_where('tbl_cliente', ['cliente_id' => $id])->row();
       $data['sedes'] = json_encode($this->db->get_where('tbl_sedes', ['cliente_id' => $id])->result_array());
@@ -27,8 +27,8 @@ class Cliente extends Admin_Controller{
     $this->load->view('admin/_layout_main', $data);
   }
   // ------------------- LISTAR CLIENTES
-  public function clienteList($type = null){
-    if ($this->input->is_ajax_request()){
+  public function clienteList($type = null){    
+    if($this->input->is_ajax_request()){
       $this->load->model('datatables');
       $this->datatables->table = 'tbl_cliente';
       $this->datatables->column_search = array(
@@ -40,11 +40,7 @@ class Cliente extends Admin_Controller{
         'tbl_cliente.representante_legal');
       $this->datatables->column_order = array(' ', 'tbl_cliente.razon_social', 'tbl_cliente.ruc');
       $this->datatables->order = array('cliente_id' => 'desc');
-      if(!empty($type)){
-        $where = null;
-      }else{
-        $where = null;
-      }
+      $where = (!empty($type)) ? array('tbl_cliente.cliente_id' => $type) : null;
       $fetch_data = make_datatables($where);
       $data = array();
       foreach($fetch_data as $_key => $client){
@@ -201,7 +197,6 @@ class Cliente extends Admin_Controller{
           $account_id = $this->db->insert_id();
           // ------------------- INSERTAR #5: 'tbl_client_role'...
           $this->db->insert('tbl_client_role', ['user_id' => $user_id, 'menu_id' => 17]);
-
           if($client_id){
             $returnclient = ['action' => 'created','type' => "success",'message' => "Registro Exitoso", 'cliente_id' => $client_id];
           }else{
@@ -347,52 +342,31 @@ class Cliente extends Admin_Controller{
   public function delete_client($id = NULL){
     if(!empty($id) || $id != "" || $id != NULL){
       $getDataclient = $this->db->select('cliente_id, ruc')->where('cliente_id', $id)->get('tbl_cliente')->row();
-      $getDataSedes = $this->db->select('sede_id')->where('cliente_id', $getDataclient->cliente_id)->get('tbl_sedes')->row(); // ELIMINAR DE 'tbl_sedes'
-      $getDataUser = $this->db->select('client_id')->where('client_id', $getDataclient->cliente_id)->order_by('user_id', 'DESC')->limit(1)->get('tbl_users')->row(); // ELIMINAR DE 'tbl_users'
-      $getDataAccountDetails = $this->db->select('account_details_id')->where('user_id', $getDataclient->cliente_id)->get('tbl_account_details')->row(); // ELIMINAR DE 'tbl_account_details'
-      $getDataClientRole = $this->db->select('client_role_id')->where('user_id', $getDataclient->cliente_id)->get('tbl_client_role')->row(); // ELIMINAR DE 'tbl_client_role'
-      
-      echo "tbl_cliente <br>";
-      echo "<pre>";
-      print_r($getDataclient);
-      echo "</pre>";
-      echo "tbl_users <br>";
-      echo "<pre>";
-      print_r($getDataUser);
-      echo "</pre>";
-      echo "tbl_account_details <br>";
-      echo "<pre>";
-      print_r($getDataAccountDetails);
-      echo "</pre>";
-      echo "tbl_sedes <br>";
-      echo "<pre>";
-      print_r($getDataSedes);
-      echo "</pre>";
-      echo "tbl_client_role <br>";
-      echo "<pre>";
-      print_r($getDataClientRole);
-      echo "</pre>";
-      exit();
-      
+      $getDataSedes = $this->db->select('sede_id')->where('cliente_id', $getDataclient->cliente_id)->get('tbl_sedes')->result(); // ELIMINAR DE 'tbl_sedes'
+      $getDataUser = $this->db->select('user_id','client_id')->where('client_id', $getDataclient->cliente_id)->order_by('user_id', 'DESC')->limit(1)->get('tbl_users')->row(); // ELIMINAR DE 'tbl_users'
+      $getDataAccountDetails = $this->db->select('account_details_id')->where('user_id', $getDataUser->user_id)->get('tbl_account_details')->row(); // ELIMINAR DE 'tbl_account_details'
+      $getDataClientRole = $this->db->select('client_role_id')->where('user_id', $getDataUser->user_id)->get('tbl_client_role')->row(); // ELIMINAR DE 'tbl_client_role'      
       if(count($getDataclient) > 0 && count($getDataUser) > 0 && count($getDataAccountDetails) > 0 && count($getDataSedes) > 0 && count($getDataClientRole) > 0){
         if($this->db->where('cliente_id', $id)->delete('tbl_cliente')){
-          if($this->db->where('client_id', $getDataclient->cliente_id)->delete('tbl_users')){
-            if($this->db->where('user_id', $getDataclient->cliente_id)->delete('tbl_account_details')){
-              // ------ NOTA: RECORRER LAS SEDES, VALIDAR EL DELETE DE ESTOS Y COLOCAR DENTRO EL DELETE PARA 'tbl_client_role'
-              if($this->db->where('cliente_id', $getDataclient->cliente_id)->delete('tbl_sedes')){
-                if($this->db->where('user_id', $getDataclient->cliente_id)->delete('tbl_client_role')){
-                  $data = ['type' => 'success','message' => 'Registro Eliminado con Exito!!','state_mssg' => 'Todos los datos del cliente en otras tablas han sido eliminadas'];
+          // ------ NOTA: RECORRER LAS SEDES, VALIDAR EL DELETE DE ESTOS Y COLOCAR DENTRO EL DELETE PARA 'tbl_client_role'
+          foreach($getDataSedes as $key => $allsedes){
+            if($this->db->where('cliente_id', $getDataclient->cliente_id)->delete('tbl_sedes')){
+              if($this->db->where('client_id', $getDataclient->cliente_id)->delete('tbl_users')){
+                if($this->db->where('user_id', $getDataUser->user_id)->delete('tbl_account_details')){
+                  if($this->db->where('user_id', $getDataUser->user_id)->delete('tbl_client_role')){
+                    $data = ['type' => 'success','message' => 'Registro Eliminado con Exito!!','state_mssg' => 'Todos los datos del cliente en otras tablas han sido eliminadas'];
+                  }else{
+                    $data = ['type' => 'attention','message' => 'Registro Eliminado con Exito!!','state_mssg' => 'No se encontró o no se pudo eliminar datos del cliente en *tbl_client_role*'];
+                  }
                 }else{
-                  $data = ['type' => 'attention','message' => 'Registro Eliminado con Exito!!','state_mssg' => 'No se encontró o no se pudo eliminar datos del cliente en *tbl_client_role*'];
+                  $data = ['type' => 'attention','message' => 'Registro Eliminado con Exito!!','state_mssg' => 'No se encontró o no se pudo eliminar datos del cliente en *tbl_account_details*'];
                 }
               }else{
-                $data = ['type' => 'attention','message' => 'Registro Eliminado con Exito!!','state_mssg' => 'No se encontró o no se pudo eliminar datos del cliente en *tbl_sedes*'];
+                $data = ['type' => 'attention','message' => 'Registro Eliminado con Exito!!','state_mssg' => 'No se encontró o no se pudo eliminar datos del cliente en *tbl_users*'];
               }
             }else{
-              $data = ['type' => 'attention','message' => 'Registro Eliminado con Exito!!','state_mssg' => 'No se encontró o no se pudo eliminar datos del cliente en *tbl_account_details*'];
+              $data = ['type' => 'attention','message' => 'Registro Eliminado con Exito!!','state_mssg' => 'No se encontró o no se pudo eliminar datos del cliente en *tbl_sedes*'];
             }
-          }else{
-            $data = ['type' => 'attention','message' => 'Registro Eliminado con Exito!!','state_mssg' => 'No se encontró o no se pudo eliminar datos del cliente en *tbl_users*'];
           }
         }else{
           $data = ['type' => 'error','message' => 'Ocurrio un Error al Eliminar el Registro.'];

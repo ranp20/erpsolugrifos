@@ -55,9 +55,9 @@ $deleted = can_action('4', 'deleted');
                   $(this).addClass('active');
                   var filter_by = $(this).attr('id');
                   if (filter_by) {
-                      filter_by = filter_by;
+                    filter_by = filter_by;
                   } else {
-                      filter_by = '';
+                    filter_by = '';
                   }
                   table_url(base_url + list + '/' + filter_by);
                 });
