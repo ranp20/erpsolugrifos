@@ -10,47 +10,45 @@ class Announcements_section extends Admin_Controller{
     $data['subview'] = $this->load->view('admin/announcements_section/index', $data, TRUE);
     $this->load->view('admin/_layout_main', $data);
   }
+  // ------------------- MOSTRAR FORMULARIO DE SECCIÓN DE ANUNCIOS
   public function add_announcements_section($id = NULL){
     $data['title'] = 'Agregar Sección';
-    if (!empty($id)){
+    if(!empty($id)){
       $data['title'] = 'Actualizar Sección';
       $data['announcements_sec_info'] = (object) $this->db->get_where('tbl_announcements_section', ['id' => $id])->row();
     }
     $data['subview'] = $this->load->view('admin/announcements_section/add_announcements_section', $data, FALSE);
     $this->load->view('admin/_layout_modal', $data);
   }
+  // ------------------- GUARDAR SECCIONES DE ANUNCIOS
   public function save_announcements_section($id = NULL){
-    $created = true;
-    $edited = true;
-    if (!empty($created) || !empty($edited) && !empty($id)){
+    if($id == "" || $id == NULL){
       $data['name'] = $this->input->post('titulo');
       $this->announcements_section_model->_table_name  = 'tbl_announcements_section';
       $this->announcements_section_model->_primary_key = "id";
-      $return_id                      = $this->announcements_section_model->save($data, $id);
-      if($return_id){
-        $type = "success";
-        $message = 'Registro Exitoso';
-      }else{
-        $type = "error";
-        $message = 'Falló el registro';
-      }
-      set_message($type, $message);
-      redirect('admin/announcements_section');
+      $return_id = $this->announcements_section_model->save($data, $id);
+      $name_folder = $this->input->post('titulo'); // NUEVO NOMBRE PARA LA CARPETA EN GOOGLE DRIVE
+      $folderparentId = getIdMainFolder("anuncios"); // OBTENEMOS EL ID DE LA CARPETA RAÍZ EN GOOGLE DRIVE
+      $description_folder = 'Sección de anuncio: "ID_NOMBRE" - ('.$return_id.'_'.$name_folder.')'; // AGREGAR UNA BREVE DESCRIPCIÓN A LA CARPETA
+      $folder = driveCreate($name_folder, $folderparentId, $description_folder); // CREACIÓN DE LA CARPETA EN GOOGLE DRIVE
+      $data_update['id_carpeta'] = $folder->id; // OBTENEMOS EL ID DE LA CARPETA SUBIDA EN GOOGLE DRIVE
+      $id_update = $this->announcements_section_model->save($data_update, $return_id); // ACTUALIZAMOS EL REGISTRO CON LA NUEVA "ID_CARPETA"
+      $returnannouncement_section = ['action' => 'created','type' => 'success','message' => 'Sección creada','announcement_section_id' => $return_id];
+    }else{
+      echo "Any ID";
     }
+    set_message($returnannouncement_section['type'], $returnannouncement_section['message']);
+    redirect('admin/announcements_section');
   }
+  // -------------------LISTAR SECCIÓN DE ANUNCIOS
   public function announcements_sectionList($type = null){
-    if ($this->input->is_ajax_request()){
+    if($this->input->is_ajax_request()){
       $this->load->model('datatables');
       $this->datatables->table = 'tbl_announcements_section';
       $this->datatables->column_search = array('tbl_announcements_section.name');
       $this->datatables->column_order = array(' ', 'tbl_announcements_section.name');
       $this->datatables->order = array('id' => 'desc');
-      // get all invoice
-      if (!empty($type)){
-        $where = array('tbl_announcements_section.id' => $type);
-      } else {
-        $where = null;
-      }
+      $where = (!empty($type)) ? array('tbl_announcements_section.id' => $type) : null;
       $fetch_data = make_datatables($where);
       $data = array();
       foreach ($fetch_data as $_key => $announcements_section){
@@ -74,51 +72,37 @@ class Announcements_section extends Admin_Controller{
       redirect('admin/dashboard');
     }
   }
+  // ------------------- ACTIVAR/DESACTIVAR SECCIÓN DE ANUNCIO
   function active($id, $status){
     if(!empty($id) && $id > 0 && !empty($status)){
       $st_chck = ($status == "on") ? 1 : 0;
       $this->db->where('id', $id);
       if($this->db->update('tbl_announcements_section', ['status' => $st_chck])){
-        $data['type'] = 'success';
-        $data['message'] = 'Sección de anuncio Actualizado';
+        $data = ['type' => 'success', 'message' => 'Sección de anuncio Actualizado'];
       }else{
-        $data['type'] = 'error';
-        $data['message'] = 'Sección de anuncio no Actualizado';
+        $data = ['type' => 'error', 'message' => 'Sección de anuncio no Actualizado'];
       }
     }else{
-      $data['type'] = 'error';
-      $data['message'] = 'Sección de anuncio no Actualizado';
+      $data = ['type' => 'error', 'message' => 'Sección de anuncio no Actualizado'];
     }
     echo json_encode($data);
     die();
   }
-  /******************************* NUEVO CONTENIDO (INICIO) *******************************/
+  // ------------------- ELIMINAR SECCIÓN DE ANUNCIO
   public function delete_announcements_section($id = NULL){
     if(isset($id)){
       $data_announcements_section = $this->db->where('id', $id)->get('tbl_announcements_section')->row();
       if(count($data_announcements_section) > 0){
         if($this->db->where('id', $id)->delete('tbl_announcements_section')){
-          $data = [
-            'type'    => 'success',
-            'message' => 'Registro Eliminado con Exito!!'
-          ];
+          $data = ['type' => 'success', 'message' => 'Registro Eliminado con Exito!!'];
         }else{
-          $data = [
-            'type'    => 'error',
-            'message' => 'Ocurrio un Error al Eliminar el Registro.'
-          ];
+          $data = ['type' => 'error', 'message' => 'Ocurrio un Error al Eliminar el Registro.'];
         }
       }else{
-        $data = [
-          'type'    => 'error',
-          'message' => 'Registro no existe'
-        ];
+        $data = ['type' => 'error', 'message' => 'Registro no existe'];
       }
     }else{
-      $data = [
-        'type'    => 'error',
-        'message' => 'Error al eliminar Registro'
-      ];
+      $data = ['type' => 'error', 'message' => 'Error al eliminar Registro'];
     }
   echo json_encode($data);
   die();

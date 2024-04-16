@@ -2657,11 +2657,17 @@ function email_templates($where, $id = null, $user = null){
 }
 // ----------------- aQMiGuEL
 // ------------- OBTENER EL NOMBRE DE LA CARPETA RAIZ - GOOGLE DRIVE
-function getIdMainFolder(){
-    // return '1V-Kd-yQPc86pNd5vWSVUtzNke3yYeGu2'; // ID DE LA CARPETA PRINCIPAL ANTERIOR (ANTERIOR DESARROLLADOR)
-    // return '1jTLXTiUuAV-al5QND4sgeavEmetcKsvC'; // ID DE LA CARPETA PRINCIPAL ANTERIOR (ANTERIOR DESARROLLADOR)
-    // return '1jK_NhuE9X4lo5ErgYbqkVTiT0p1zEfKg'; // ID DE LA CARPETA PRINCIPAL - 26/11/2023 (plataforma@solugrifos.com)
-    return '1d7ApZyElUzpjq7SvnK1p4JJ35ktrgukn'; // ID DE LA CARPETA PRINCIPAL - 09/04/2024 (planverdeplataforma@gmail.com)
+function getIdMainFolder($section = NULL){
+    if($section != ""){
+        if($section == "anuncios"){
+            return '1XJFvOfDN60DShrUiNlCSY72BcyrqTyL8'; // ID DE LA CARPETA ANUNCIOS - 15/04/2024 (planverdeplataforma@gmail.com)
+        }
+    }else{
+        // return '1V-Kd-yQPc86pNd5vWSVUtzNke3yYeGu2'; // ID DE LA CARPETA PRINCIPAL ANTERIOR (ANTERIOR DESARROLLADOR)
+        // return '1jTLXTiUuAV-al5QND4sgeavEmetcKsvC'; // ID DE LA CARPETA PRINCIPAL ANTERIOR (ANTERIOR DESARROLLADOR)
+        // return '1jK_NhuE9X4lo5ErgYbqkVTiT0p1zEfKg'; // ID DE LA CARPETA PRINCIPAL - 26/11/2023 (plataforma@solugrifos.com)
+        return '1d7ApZyElUzpjq7SvnK1p4JJ35ktrgukn'; // ID DE LA CARPETA PRINCIPAL - 09/04/2024 (planverdeplataforma@gmail.com)
+    }
 }
 // ------------- CONFIGURAR SERVICIO - GOOGLE DRIVE
 function driveService(){

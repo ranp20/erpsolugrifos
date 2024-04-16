@@ -12,6 +12,7 @@ class Anuncio extends Admin_Controller{
     $data['subview'] = $this->load->view('admin/anuncios/index', $data, TRUE);
     $this->load->view('admin/_layout_main', $data); //page load
   }
+  // ------------------- MOSTRAR FORMULARIO DE ANUNCIO
   public function add_anuncio($id = NULL){
     $data['title'] = 'Agregar Anuncio';
     $data['all_sections'] = $this->db->get('tbl_announcements_section')->result_array();
@@ -22,6 +23,7 @@ class Anuncio extends Admin_Controller{
     $data['subview'] = $this->load->view('admin/anuncios/add_anuncio', $data, FALSE);
     $this->load->view('admin/_layout_modal', $data);
   }
+  // ------------------- LISTAR ANUNCIOS
   public function anuncioList($type = null){
     if ($this->input->is_ajax_request()){
       $this->load->model('datatables');

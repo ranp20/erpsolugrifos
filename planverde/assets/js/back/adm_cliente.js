@@ -79,16 +79,88 @@ $(() => {
     });
   })
   $(document).on('click', '.delete-sede', function(){
+    let client_id = $(this).attr("data-clientid");
+    let sede_id = $(this).attr("data-sedeid");
     let el = $(this);
-    el.parent().parent('.sede-panel-new').remove();
-    if($(".sede-panel-old").length > 0){
+    if(client_id !== undefined && client_id !== '' && sede_id !== undefined && sede_id !== ''){
+      Swal.fire({
+        title: 'Estás seguro?',
+        text: "Está acción no es reversible!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, Eliminar!',
+        cancelButtonText: "Cancelar",
+      }).then((result) => {
+        if (result.isConfirmed){
+          let urlDeleteSede = base_url + 'admin/cliente/delete_sede/'+client_id+'/'+sede_id;
+          $.ajax({
+            type: "POST",
+            url: urlDeleteSede,
+            dataType: "json",
+            beforeSend: function(){
+              $(`<div id="loading-indicator">
+              <div class="loading-indicator__c">
+                <div class="loading-indicator__c--loader"></div>
+                <div class="loading-indicator__c--cMssg">
+                  <span>Eliminando registro...</span>
+                </div>
+              </div>
+            </div>`).insertBefore('.content-wrapper');
+            },
+            success: function(e){
+              if(e != []){
+                let r = e;
+                if(r.type == "success"){
+                  el.parent().parent('.sede-panel-new').remove();
+                  if($(".sede-panel-old").length > 0){
+                  }else{
+                    if($(".sede-panel-new").length){
+                    }else{
+                      $("#sedes").html(`<div class="col-12" id="cScreenAny_sedes">
+                        <h3>No existe ninguna Sede</h3>
+                        <input tabindex="-1" placeholder="phdr-whidipts" type="hidden" width="0" height="0" autocomplete="off" spellcheck="false" f-hidden="aria-hidden" class="non-visvalipt h-alternative-shwnon s-fkeynone-step" id="iptinvalid-forvalid_client" name="iptinvalid-forvalid_client" required>
+                      </div>`);
+                    }
+                  }
+                  $('#loading-indicator').remove();
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: 'La sede se eliminó correctamente.',
+                  });
+                }else{
+                  $('#loading-indicator').remove();
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'No se pudo eliminar la sede.',
+                  });
+                }
+              }else{
+                $('#loading-indicator').remove();
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'No se pudo eliminar la sede.',
+                });
+              }
+            }
+          }); 
+        }
+      });
     }else{
-      if($(".sede-panel-new").length){
+      el.parent().parent('.sede-panel-new').remove();
+      if($(".sede-panel-old").length > 0){
       }else{
-        $("#sedes").html(`<div class="col-12" id="cScreenAny_sedes">
-          <h3>No existe ninguna Sede</h3>
-          <input tabindex="-1" placeholder="phdr-whidipts" type="hidden" width="0" height="0" autocomplete="off" spellcheck="false" f-hidden="aria-hidden" class="non-visvalipt h-alternative-shwnon s-fkeynone-step" id="iptinvalid-forvalid_client" name="iptinvalid-forvalid_client" required>
-        </div>`);
+        if($(".sede-panel-new").length){
+        }else{
+          $("#sedes").html(`<div class="col-12" id="cScreenAny_sedes">
+            <h3>No existe ninguna Sede</h3>
+            <input tabindex="-1" placeholder="phdr-whidipts" type="hidden" width="0" height="0" autocomplete="off" spellcheck="false" f-hidden="aria-hidden" class="non-visvalipt h-alternative-shwnon s-fkeynone-step" id="iptinvalid-forvalid_client" name="iptinvalid-forvalid_client" required>
+          </div>`);
+        }
       }
     }    
   });

@@ -195,10 +195,10 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
                 // echo $key."<br>";
                 // $permission = json_decode( $sede->permission );
             ?>
-              <div class="panel panel-custom sede-panel-new">
+              <div class="panel panel-custom sede-panel-new added_panel">
                 <header class="panel-heading">
                   <span>Sede Operativa</span>
-                  <span class="btn btn-danger delete-sede"><i class="fa fa-trash"></i> Eliminar Sede</span>
+                  <span class="btn btn-danger delete-sede" data-clientid="<?php echo $sede->cliente_id;?>" data-sedeid="<?php echo $sede->sede_id;?>"><i class="fa fa-trash"></i> Eliminar Sede</span>
                 </header>
                 <div class="panel-body">
                   <div class="cCtrlsGroup__Row">
@@ -250,54 +250,52 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
                       <span>Permisos</span>
                     </div>
                     <div class="row">
-                        <?php
-                        $permissions = json_decode($sede->permission, TRUE);
-                        $data_categories = $this->db->get('tbl_categoria')->result_object();
+                      <?php
+                      $permissions = json_decode($sede->permission, TRUE);
+                      $data_categories = $this->db->get('tbl_categoria')->result_object();
 
-                        foreach ($data_categories as $key => $cat) :
-                          $data_subcategories = $this->db->where(['categoria_id' => $cat->categoria_id])->get('tbl_subcategoria')->result_object();
-
-                          $countCheck = 0;
-                          foreach( $data_subcategories as $key => $v ):
-                            $countCheck += (int)(( in_array( $v->subcategoria_id, $permissions ) ) ? 1 : 0);
-                          endforeach;
-
-                          $checked = (count($data_subcategories) == ($countCheck)) ? 'checked' : '';
-
-                        ?>
-                          <div class="col-md-4 col-xs-12 col-sm-6">
-                            <div class="panel panel-primary cGrpCtrls__secGrp__cBody__cItem__c">
-                              <div class="panel-heading mb-0">
-                                <span><strong><?php echo $cat->nombre_categoria;?></strong></span>
-                                <!-- <span><?php //echo count($data_subcategories).'-'. ($countCheck); ?></span> -->
-                                <!-- <div class=" checkbox d-none non-visvalipt h-alternative-shwnon s-fkeynone-step" style="display:none;"> -->
-                                <div class="checkbox">
-                                  <input data-id="" data-toggle="toggle" name="permissions-all[]" class="permissions-all" value="" <?php echo $checked; ?> data-on="SI" data-off="NO" data-onstyle="success btn-xs" data-offstyle="danger btn-xs" type="checkbox">
-                                </div>
-                              </div>
-
-                              <div class="cGrpCtrls__secGrp__cBody__cItem__c__cList">
-                                <?php
-                                foreach ($data_subcategories as $key_sub => $subcat) :
-                                ?>
-                                  <div class="form-group">
-                                    <label class="col-lg-8 control-label text-right"><?= $subcat->nombre_subcategoria ?></label>
-                                    <!-- <span style="color: red !important;"><?php //echo $subcat->subcategoria_id ?></span> -->
-                                    <div class="col-lg-4 checkbox">
-                                      <input class="permission-check" data-id="" data-toggle="toggle" name="permisos_new_<?php echo $countTotalSedes . '[]'; ?>" value="<?= $subcat->subcategoria_id ?>" <?php echo (!empty($permissions) && in_array($subcat->subcategoria_id, $permissions)) ? 'checked' : ''; ?> data-on="SI" data-off="NO" data-onstyle="success btn-xs" data-offstyle="danger btn-xs" type="checkbox">
-                                    </div>
-                                  </div>
-                                <?php
-                                endforeach;
-                                ?>
-                              </div>
-
-                            </div>
-                          </div>
-                        <?php
+                      foreach ($data_categories as $key => $cat) :
+                        $data_subcategories = $this->db->where(['categoria_id' => $cat->categoria_id])->get('tbl_subcategoria')->result_object();
+                        $countCheck = 0;
+                        foreach( $data_subcategories as $key => $v ):
+                          $countCheck += (int)(( in_array( $v->subcategoria_id, $permissions ) ) ? 1 : 0);
                         endforeach;
-                        ?>
-                      </div>
+                        $checked = (count($data_subcategories) == ($countCheck)) ? 'checked' : '';
+
+                      ?>
+                        <div class="col-md-4 col-xs-12 col-sm-6">
+                          <div class="panel panel-primary cGrpCtrls__secGrp__cBody__cItem__c">
+                            <div class="panel-heading mb-0">
+                              <span><strong><?php echo $cat->nombre_categoria;?></strong></span>
+                              <!-- <span><?php //echo count($data_subcategories).'-'. ($countCheck); ?></span> -->
+                              <!-- <div class=" checkbox d-none non-visvalipt h-alternative-shwnon s-fkeynone-step" style="display:none;"> -->
+                              <div class="checkbox">
+                                <input data-id="" data-toggle="toggle" name="permissions-all[]" class="permissions-all" value="" <?php echo $checked; ?> data-on="SI" data-off="NO" data-onstyle="success btn-xs" data-offstyle="danger btn-xs" type="checkbox">
+                              </div>
+                            </div>
+
+                            <div class="cGrpCtrls__secGrp__cBody__cItem__c__cList">
+                              <?php
+                              foreach ($data_subcategories as $key_sub => $subcat) :
+                              ?>
+                                <div class="form-group">
+                                  <label class="col-lg-8 control-label text-right"><?= $subcat->nombre_subcategoria ?></label>
+                                  <!-- <span style="color: red !important;"><?php //echo $subcat->subcategoria_id ?></span> -->
+                                  <div class="col-lg-4 checkbox">
+                                    <input class="permission-check" data-id="" data-toggle="toggle" name="permisos_new_<?php echo $countTotalSedes . '[]'; ?>" value="<?= $subcat->subcategoria_id ?>" <?php echo (!empty($permissions) && in_array($subcat->subcategoria_id, $permissions)) ? 'checked' : ''; ?> data-on="SI" data-off="NO" data-onstyle="success btn-xs" data-offstyle="danger btn-xs" type="checkbox">
+                                  </div>
+                                </div>
+                              <?php
+                              endforeach;
+                              ?>
+                            </div>
+
+                          </div>
+                        </div>
+                      <?php
+                      endforeach;
+                      ?>
+                    </div>
                   </div>
                 </div>
               </div> 

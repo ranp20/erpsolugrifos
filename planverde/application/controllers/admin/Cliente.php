@@ -380,4 +380,18 @@ class Cliente extends Admin_Controller{
     echo json_encode($data);
     die();
   }
+  // ------------------- ELIMINAR SEDE POR CLIENTE
+  public function delete_sede($id_client = NULL, $id_sede = NULL){
+    if(!empty($id_client) || $id_client != "" || $id_client != NULL){
+      if($this->db->where('sede_id', $id_sede)->where('cliente_id', $id_client)->delete('tbl_sedes')){
+        $data = ['type' => 'success','message' => 'Se eliminó la sede.'];
+      }else{
+        $data = ['type' => 'error','message' => 'Error al Eliminar la sede(A).'];
+      }
+    }else{
+      $data = ['type' => 'error','message' => 'Error al Eliminar la sede(B).'];
+    }
+    echo json_encode($data);
+    die();
+  }
 }
