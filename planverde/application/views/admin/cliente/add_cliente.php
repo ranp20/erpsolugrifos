@@ -195,7 +195,7 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
                 // echo $key."<br>";
                 // $permission = json_decode( $sede->permission );
             ?>
-              <div class="panel panel-custom sede-panel-new added_panel">
+              <div class="panel panel-custom added_panel">
                 <header class="panel-heading">
                   <span>Sede Operativa</span>
                   <span class="btn btn-danger delete-sede" data-clientid="<?php echo $sede->cliente_id;?>" data-sedeid="<?php echo $sede->sede_id;?>"><i class="fa fa-trash"></i> Eliminar Sede</span>
@@ -209,19 +209,19 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
                       <div class="form-group">
                         <div class="col-sm-6">
                           <label class=" control-label">Administrador</label>
-                          <input type="text" name="administrador_sede_new[]" class="form-control" placeholder="Administrador" value="<?php echo (isset($sede->administrador)) ? $sede->administrador : ''; ?>">
+                          <input type="text" name="administrador_sede_update[]" class="form-control" placeholder="Administrador" value="<?php echo (isset($sede->administrador)) ? $sede->administrador : ''; ?>">
                         </div>
                         <div class="col-sm-6">
                           <label class=" control-label">Administrador SST</label>
-                          <input type="text" name="administrador_sst_sede_new[]" class="form-control" placeholder="Administrador SST" value="<?php echo (isset($sede->administrador_sst)) ? $sede->administrador_sst : ''; ?>">
+                          <input type="text" name="administrador_sst_sede_update[]" class="form-control" placeholder="Administrador SST" value="<?php echo (isset($sede->administrador_sst)) ? $sede->administrador_sst : ''; ?>">
                         </div>
                         <div class="col-sm-4">
                           <label class=" control-label">Correo</label>
-                          <input type="text" name="correo_sede_new[]" class="form-control" placeholder="Correo" value="<?php echo (isset($sede->correo)) ? $sede->correo : ''; ?>">
+                          <input type="text" name="correo_sede_update[]" class="form-control" placeholder="Correo" value="<?php echo (isset($sede->correo)) ? $sede->correo : ''; ?>">
                         </div>
                         <div class="col-sm-4">
                           <label class=" control-label">Celular</label>
-                          <input type="text" name="celular_sede_new[]" class="form-control" placeholder="Celular" value="<?php echo (isset($sede->celular) && $sede->celular != 0) ? $sede->celular : ''; ?>">
+                          <input type="text" name="celular_sede_update[]" class="form-control" placeholder="Celular" value="<?php echo (isset($sede->celular) && $sede->celular != 0) ? $sede->celular : ''; ?>">
                         </div>
                       </div>
                     </div>
@@ -232,15 +232,15 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
                       <div class="form-group">
                         <div class="col-sm-8">
                           <label class=" control-label">Direccion</label>
-                          <input type="text" name="direccion_sede_new[]" class="form-control" placeholder="Dirección" value="<?php echo (isset($sede->direccion)) ? $sede->direccion : ''; ?>" required>
+                          <input type="text" name="direccion_sede_update[]" class="form-control" placeholder="Dirección" value="<?php echo (isset($sede->direccion)) ? $sede->direccion : ''; ?>" required>
                         </div>
                         <div class="col-sm-4">
                           <label class=" control-label">Distrito</label>
-                          <input type="text" name="distrito_sede_new[]" class="form-control" placeholder="Distrito" value="<?php echo (isset($sede->distrito)) ? $sede->distrito : ''; ?>" required>
+                          <input type="text" name="distrito_sede_update[]" class="form-control" placeholder="Distrito" value="<?php echo (isset($sede->distrito)) ? $sede->distrito : ''; ?>" required>
                         </div>
                         <div class="col-sm-4">
                           <label class=" control-label">Provincia</label>
-                          <input type="text" name="provincia_sede_new[]" class="form-control" placeholder="Provincia" value="<?php echo (isset($sede->provincia)) ? $sede->provincia : ''; ?>" required>
+                          <input type="text" name="provincia_sede_update[]" class="form-control" placeholder="Provincia" value="<?php echo (isset($sede->provincia)) ? $sede->provincia : ''; ?>" required>
                         </div>
                       </div>
                     </div>
@@ -282,7 +282,7 @@ $locales = $this->db->order_by('name')->get('tbl_locales')->result();
                                   <label class="col-lg-8 control-label text-right"><?= $subcat->nombre_subcategoria ?></label>
                                   <!-- <span style="color: red !important;"><?php //echo $subcat->subcategoria_id ?></span> -->
                                   <div class="col-lg-4 checkbox">
-                                    <input class="permission-check" data-id="" data-toggle="toggle" name="permisos_new_<?php echo $countTotalSedes . '[]'; ?>" value="<?= $subcat->subcategoria_id ?>" <?php echo (!empty($permissions) && in_array($subcat->subcategoria_id, $permissions)) ? 'checked' : ''; ?> data-on="SI" data-off="NO" data-onstyle="success btn-xs" data-offstyle="danger btn-xs" type="checkbox">
+                                    <input class="updatepermissions permission-check" data-id="" data-toggle="toggle" name="permisos_update_<?php echo $countTotalSedes . '[]'; ?>" value="<?= $subcat->subcategoria_id ?>" <?php echo (!empty($permissions) && in_array($subcat->subcategoria_id, $permissions)) ? 'checked' : ''; ?> data-on="SI" data-off="NO" data-onstyle="success btn-xs" data-offstyle="danger btn-xs" type="checkbox">
                                   </div>
                                 </div>
                               <?php

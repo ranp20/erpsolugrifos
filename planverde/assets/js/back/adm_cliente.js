@@ -54,14 +54,10 @@ $(() => {
     observer.observe(document.body, { childList: true, subtree: true });
   });
   $(document).on('click', '#new-sede', function(){
-    $("#cScreenAny_sedes").remove();
-    var indSedes = 0;
-    if($(".sede-panel-new").length > 0){
-      $.each($(".sede-panel-new"), function(i,e){
-        // console.log(e);
-        indSedes++;
-      });
-    }
+    if($("#cScreenAny_sedes").length > 0){
+      $("#cScreenAny_sedes").remove();
+    }    
+    var indAddSedes = 0;
     $.ajax({
       type: "POST",
       url: base_url + 'admin/sede/form',
@@ -70,11 +66,14 @@ $(() => {
         $("#sedes").append(response);
       },
       complete: function(){
-        $(".permisos").addClass('new_permission');
-        $('.new_permission').attr('name', 'permisos_new_' + indSedes + '[]');
-        permiso += 1
-        $(".permisos").removeClass('new_permission');
-        $(".permisos").removeClass('permisos');
+        if($(".sede-panel-new").length > 0){
+          $.each($(".sede-panel-new"), function(i,e){
+            $(this).find("input.addedpermissions").each(function(iitem,eitem){
+              $(this).attr('name', `permisos_new_${indAddSedes}[]`);
+            });
+            indAddSedes++;
+          });
+        }
       }
     });
   })
@@ -82,6 +81,8 @@ $(() => {
     let client_id = $(this).attr("data-clientid");
     let sede_id = $(this).attr("data-sedeid");
     let el = $(this);
+    var indDelSedesNew = 0;
+    var indDelSedesUpdated = 0;
     if(client_id !== undefined && client_id !== '' && sede_id !== undefined && sede_id !== ''){
       Swal.fire({
         title: 'Estás seguro?',
@@ -116,7 +117,16 @@ $(() => {
                   el.parent().parent('.sede-panel-new').remove();
                   if($(".sede-panel-old").length > 0){
                   }else{
-                    if($(".sede-panel-new").length){
+                    if($(".added_panel").length){
+                      // CUANDO ESTÁN ALMACENADAS LAS SEDES...
+                      $.each($(".added_panel"), function(i,e){
+                        $(this).find("input.updatepermissions").each(function(iitem,eitem){
+                          $(this).attr('name', `permisos_update_${indDelSedesUpdated}[]`);
+                        });
+                        indDelSedesUpdated++;
+                      });
+                    }else if($(".sede-panel-new").length){
+                      // MANTENER LAS NUEVAS SEDES SIN ID EN BD...
                     }else{
                       $("#sedes").html(`<div class="col-12" id="cScreenAny_sedes">
                         <h3>No existe ninguna Sede</h3>
@@ -155,6 +165,14 @@ $(() => {
       if($(".sede-panel-old").length > 0){
       }else{
         if($(".sede-panel-new").length){
+          $.each($(".sede-panel-new"), function(i,e){
+            $(this).find("input.addedpermissions").each(function(iitem,eitem){
+              $(this).attr('name', `permisos_new_${indDelSedesNew}[]`);
+            });
+            indDelSedesNew++;
+          });
+        }else if($(".added_panel").length){
+          // MANTENER LAS NUEVAS SEDES CON ID EN BD...
         }else{
           $("#sedes").html(`<div class="col-12" id="cScreenAny_sedes">
             <h3>No existe ninguna Sede</h3>
@@ -180,7 +198,7 @@ $(() => {
         item.parent().removeClass('btn-success on');
         item.parent().addClass('btn-danger off');
       }
-      console.log(item.parent().parent());
+      // console.log(item.parent().parent());
     });
   });
   

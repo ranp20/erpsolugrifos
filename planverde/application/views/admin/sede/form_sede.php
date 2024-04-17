@@ -74,7 +74,7 @@
                   <div class="form-group">
                     <label class="col-lg-8 control-label"><?= $subcat->nombre_subcategoria ?></label>
                     <div class="col-lg-4 checkbox">
-                      <input class="permisos permission-check-new" data-id="" data-toggle="toggle" name="permisos_new[]" value="<?= $subcat->subcategoria_id ?>" data-on="SI" data-off="NO" data-onstyle="success btn-xs" data-offstyle="danger btn-xs" type="checkbox">
+                      <input class="permisos addedpermissions permission-check-new" data-id="" data-toggle="toggle" name="permisos_new[]" value="<?= $subcat->subcategoria_id ?>" data-on="SI" data-off="NO" data-onstyle="success btn-xs" data-offstyle="danger btn-xs" type="checkbox">
                     </div>
                   </div>
                 <?php

@@ -93,6 +93,19 @@ class Cliente extends Admin_Controller{
   }
   // ------------------- GUARDAR CLIENTE
   public function save_cliente($id = NULL){
+
+    // if(empty($id) || $id == "" || $id == NULL){
+    //   echo "No existe ID de cliente";
+    // }else{
+    //   echo "Existe ID de cliente";
+    // }
+    // if(!isset($_POST['direccion_sede_new']) || !isset($_POST['direccion_sede_update'])){
+    //   echo "Existe al menos uno de ellos";
+    // }else{
+    //   echo "No existe ninguno";
+    // }
+    // exit();
+
     if(empty($id) || $id == "" || $id == NULL){
       // ------------- AGREGAR CLIENTE ------------- 
       if($this->db->where(['ruc' => $this->input->post('ruc')])->get('tbl_cliente')->row()){
@@ -100,10 +113,10 @@ class Cliente extends Admin_Controller{
         redirect('admin/cliente');
       }else{
         // VALIDAR PARA QUE SE AGREGUE AL MENOS UNA SEDE ANTES DE GUARDAR EL CLIENTE...
-        $this->load->library('session');
-        $dataPost = $this->input->post();
+        // $this->load->library('session');
+        // $dataPost = $this->input->post();
         if(!isset($_POST['direccion_sede_new'])){
-          $this->session->flashdata('cliente_info', $dataPost);
+          // $this->session->flashdata('cliente_info', $dataPost);
           set_message('error', 'Necesita <strong>agregar al menos una sede</strong> para guardar el cliente');
           redirect('admin/cliente/add_cliente');
         }else{
@@ -159,7 +172,7 @@ class Cliente extends Admin_Controller{
           foreach($_POST['direccion_sede_new'] as $key => $value){
             $permisos = [];
             foreach($_POST['permisos_new_'.$key] as $keyp => $permiso){
-              $permisos[] = $permiso;
+              $permisos[$key][] = $permiso;
             }
             $data_sede = [
               'direccion'         => $_POST['direccion_sede_new'][$key],
@@ -170,7 +183,7 @@ class Cliente extends Admin_Controller{
               'administrador'     => $_POST['administrador_sede_new'][$key],
               'administrador_sst' => $_POST['administrador_sst_sede_new'][$key],
               'cliente_id'        => $client_id,
-              'permission'        => json_encode($permisos)
+              'permission'        => json_encode($permisos[$key])
             ];
             // ------------------- INSERTAR #2: 'tbl_sedes'...
             $this->sede_model->_table_name = 'tbl_sedes';
@@ -214,7 +227,7 @@ class Cliente extends Admin_Controller{
         set_message('error', '<strong>El RUC ingresado ya existe</strong>, intente con uno nuevo');
         redirect('admin/cliente/add_cliente/'.$id);
       }else{
-        if(!isset($_POST['direccion_sede_new'])){
+        if(!isset($_POST['direccion_sede_new']) && !isset($_POST['direccion_sede_update'])){
           set_message('error', 'Necesita <strong>agregar al menos una sede</strong> para actualizar el cliente');
           redirect('admin/cliente/add_cliente/'.$id);
         }else{
@@ -264,39 +277,62 @@ class Cliente extends Admin_Controller{
           $this->cliente_model->_table_name = 'tbl_cliente';
           $this->cliente_model->_primary_key = "cliente_id";
           $client_id = $this->cliente_model->save($data, $id);
+          
+          // echo "<pre>";
+          // print_r($_POST);
+          // echo "</pre>";
+          // exit();
           // OBTENER EL ID DE LA SEDE PARA EL USUARIO A ACTUALIZAR...
-          // $data_detailsede = $this->db->select('sede_id')->where(['cliente_id' => $client_id])->get('tbl_sedes')->result_array();
-          // $countSedes = 0; // ESTE CONTADOR SE UTILIZA SI POR "A" O "B" SE CREARON MÁS SEDES DE MANERA ERRONEA...
-          // RECORRER NUEVAS SEDES Y AGREGARLAS
+          $data_detailsede = $this->db->select('sede_id')->where(['cliente_id' => $client_id])->get('tbl_sedes')->result_array();
+          $countSedes = 0; // ESTE CONTADOR SE UTILIZA SI POR "A" O "B" SE CREARON MÁS SEDES DE MANERA ERRONEA...
+          // A. RECORRER LAS SEDES CON ID EN BD...
+          foreach($_POST['direccion_sede_update'] as $key => $value){
+            $permisos = [];
+            foreach($_POST['permisos_update_'.$key] as $keyp => $permiso){
+              $permisos[$key][] = $permiso;
+            }
+            $data_sede = [
+              'direccion'         => $_POST['direccion_sede_update'][$key],
+              'distrito'          => $_POST['distrito_sede_update'][$key],
+              'provincia'         => $_POST['provincia_sede_update'][$key],
+              'correo'            => $_POST['correo_sede_update'][$key],
+              'celular'           => $_POST['celular_sede_update'][$key],
+              'administrador'     => $_POST['administrador_sede_update'][$key],
+              'administrador_sst' => $_POST['administrador_sst_sede_update'][$key],
+              'cliente_id'        => $client_id,
+              'permission'        => json_encode($permisos[$key])
+            ];
+            // ------------------- ACTUALIZAR #2: 'tbl_sedes'...
+            $this->sede_model->_table_name = 'tbl_sedes';
+            $this->sede_model->_primary_key = "sede_id";
+            $sede_id = $this->sede_model->save($data_sede, $data_detailsede[$countSedes]['sede_id']);
+            $countSedes++;
+          }
+          
+          // B. RECORRER LAS SEDES SIN ID EN BD...
           foreach($_POST['direccion_sede_new'] as $key => $value){
             $permisos = [];
-
-            // echo "<pre>";
-            // print_r($_POST);
-            // echo "</pre>";
-            // ----- NOTA: APLICAR OTRO MÉTODO DE ACTUALIZACIÓN, PARA VALIDAR LAS SEDES EXISTENTES Y LAS NUEVAS...
-
             foreach($_POST['permisos_new_'.$key] as $keyp => $permiso){
-              $permisos[] = $permiso;
+              $permisos[$key][] = $permiso;
             }
-            // $data_sede = [
-            //   'direccion'         => $_POST['direccion_sede_new'][$key],
-            //   'distrito'          => $_POST['distrito_sede_new'][$key],
-            //   'provincia'         => $_POST['provincia_sede_new'][$key],
-            //   'correo'            => $_POST['correo_sede_new'][$key],
-            //   'celular'           => $_POST['celular_sede_new'][$key],
-            //   'administrador'     => $_POST['administrador_sede_new'][$key],
-            //   'administrador_sst' => $_POST['administrador_sst_sede_new'][$key],
-            //   'cliente_id'        => $client_id,
-            //   'permission'        => json_encode($permisos)
-            // ];
-            // // ------------------- ACTUALIZAR #2: 'tbl_sedes'...
-            // $this->sede_model->_table_name = 'tbl_sedes';
-            // $this->sede_model->_primary_key = "sede_id";
-            // $sede_id = $this->sede_model->save($data_sede, $data_detailsede[$countSedes]['sede_id']);
-            // $countSedes++;
+            $data_sede = [
+              'direccion'         => $_POST['direccion_sede_new'][$key],
+              'distrito'          => $_POST['distrito_sede_new'][$key],
+              'provincia'         => $_POST['provincia_sede_new'][$key],
+              'correo'            => $_POST['correo_sede_new'][$key],
+              'celular'           => $_POST['celular_sede_new'][$key],
+              'administrador'     => $_POST['administrador_sede_new'][$key],
+              'administrador_sst' => $_POST['administrador_sst_sede_new'][$key],
+              'cliente_id'        => $client_id,
+              'permission'        => json_encode($permisos[$key])
+            ];
+            // ------------------- INSERTAR #2: 'tbl_sedes'...
+            $this->sede_model->_table_name = 'tbl_sedes';
+            $this->sede_model->_primary_key = "sede_id";
+            $sedeId = NULL;
+            $sede_id = $this->sede_model->save($data_sede, $sedeId);
           }
-          // exit();
+
           // LAS SIGUIENTES 2 LÍNEAS SON PROVICIONALES PARA PODER OBTENER EL ID DEL USUARIO Y ACTUALIZAR EL ID DEL CLIENTE EN tbl_users...
           $user_RUC = $this->input->post('ruc');
           $idUserByRUCClient = $this->db->query("SELECT user_id FROM tbl_users WHERE username = ".$user_RUC."")->result_array()[0]['user_id'];
