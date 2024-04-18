@@ -15,7 +15,7 @@ $url =  $actual_link . "/erpsolugrifos/";
       }
       $count = 0;
       $sectionGroup = [];
-      if(isset($all_anuncios) && count($all_anuncios) > 0) :
+      if(isset($all_anuncios) && count($all_anuncios) > 0){
         foreach($all_anuncios as $ads){
           $groupName = $ads->seccion;
           if(!isset($sectionGroup[$groupName])){
@@ -25,7 +25,7 @@ $url =  $actual_link . "/erpsolugrifos/";
         }
         // Count the total elements within each index
         $groupCounts = array_map('count', $sectionGroup);
-        foreach ($sectionGroup as $key => $anuncio) : 
+        foreach ($sectionGroup as $key => $anuncio){
           // $count++;
           echo "<header class='pnlHeading__c'>
             <div class='pnlHeading__c__cTitle'>
@@ -34,7 +34,8 @@ $url =  $actual_link . "/erpsolugrifos/";
           </header>";
           echo "<div class='col-md-12 col-xs-12 mb-3 p-0'>
               <div class='cntAds thmAdsCards-2'>";
-          foreach ($anuncio as $ads) :
+          foreach ($anuncio as $ads){
+            if($ads->published == 1 || $ads->published == "1"){
       ?>
         <div class="cntAds--i">
           <div class="cntAds--i__c">
@@ -71,14 +72,16 @@ $url =  $actual_link . "/erpsolugrifos/";
             </div>
           </div>
         </div>
-      <?php endforeach;
+      <?php 
+        }
+      }
         echo "</div>
         </div>";
       ?>
-      <?php endforeach;
-      else : ?>
+      <?php }
+      }else{ ?>
       <h4>No hay anuncios Por el momento!!</h4>
-      <?php endif; ?>    
+      <?php } ?>    
   </div>
 </div>
 <script type="text/javascript">    

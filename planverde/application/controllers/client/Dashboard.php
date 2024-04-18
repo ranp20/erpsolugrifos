@@ -14,13 +14,10 @@ class Dashboard extends Client_Controller{
         $data['title'] = "Anuncios | PLAN VERDE";
         $data['page'] = lang('dashboard');
         $data['breadcrumbs'] = lang('dashboard');
-        $data['all_anuncios'] = $this->db->select('tbl_anuncios.*', false)->select('announcements_section.name as seccion', false)->where(['tbl_anuncios.status' => 1])->join('tbl_announcements_section', 'tbl_anuncios.section_id = tbl_announcements_section.id', 'left')->get('tbl_anuncios')->result();
-
+        $data['all_anuncios'] = $this->db->select('tbl_anuncios.*', false)->select('announcements_section.name as seccion', false)->where(['tbl_announcements_section.status' => 1])->join('tbl_announcements_section', 'tbl_anuncios.section_id = tbl_announcements_section.id', 'left')->get('tbl_anuncios')->result();
         // $this->announcements_section_model->_table_name = "tbl_announcements_section"; //table name
         // $this->announcements_section_model->_order_by = "id";
         // $data['all_annsec_info'] = $this->announcements_section_model->get();
-
-
         $data['subview'] = $this->load->view('client/anuncios/index', $data, TRUE);
         $this->load->view('client/_layout_main', $data);
     }

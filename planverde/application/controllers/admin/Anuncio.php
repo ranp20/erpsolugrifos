@@ -28,7 +28,7 @@ class Anuncio extends Admin_Controller{
       $this->load->model('datatables');
       $this->datatables->table = 'tbl_anuncios tblads';
       // $this->datatables->select = array('tblads.*, tblsecads.id, tblsecads.name AS name_section, tblsecads.status AS status_section');
-      $this->datatables->select = 'tblads.anuncio_id, tblads.title, tblads.descripcion, tblads.foto, tblads.adjunto, tblads.status AS status_ads, tblsecads.id, tblsecads.name AS name_section, tblsecads.status AS status_section';
+      $this->datatables->select = 'tblads.anuncio_id, tblads.title, tblads.descripcion, tblads.foto, tblads.adjunto, tblads.published AS published_ads, tblads.status AS status_ads, tblsecads.id, tblsecads.name AS name_section, tblsecads.status AS status_section';
       $this->datatables->join_table = array('tbl_announcements_section tblsecads');
       $this->datatables->join_where = array('tblsecads.id = tblads.section_id');
       $this->datatables->column_search = array('tblads.titulo', 'name_section', 'tblads.foto', 'status_ads','status_section');
@@ -51,8 +51,8 @@ class Anuncio extends Admin_Controller{
         $foto = (!empty( $anuncio->foto )) ? '<a href="'.base_url().'uploads/anuncios/fotos/'. $anuncio->foto .'" target="_blank" class="c-prevAdd__link"><img width="40px" alt="'.$anuncio->foto.'" src="'.base_url().'uploads/anuncios/fotos/'. $anuncio->foto .'"></a>' : '';
         // $foto = (!empty( $anuncio->foto )) ? '<img width="40px" height="40px" alt="'.$anuncio->foto.'" src="https://drive.google.com/uc?export=view&id='. $anuncio->id_image .'">' : '';
         $sub_array[] = $foto;
-        $checked = ($anuncio->status == 1) ? "checked" : "";
-        $sub_array[] = '<div class="chk__ToggleSwitch" '.$checked."-".$anuncio->status.'>
+        $checked = ($anuncio->published != 1 || $anuncio->published != "1") ? "" : "checked";
+        $sub_array[] = '<div class="chk__ToggleSwitch '.$checked.'-'.$anuncio->published.'">
                           <div class="checkbox">
                             <input type="checkbox" class="status-anuncio" ' . $checked . ' data-id="' . $anuncio->anuncio_id . '" data-status="'.$anuncio->status.'" data-toggle="toggle" data-size="mini" data-on="Visible" data-off="No Visible" data-onstyle="success" data-offstyle="danger">
                             <label></label>
@@ -235,7 +235,7 @@ class Anuncio extends Admin_Controller{
       $data_anuncio = $this->db->where('anuncio_id', $id)->get('tbl_anuncios')->row();
       if(count($data_anuncio) > 0){
         $this->db->where('anuncio_id', $id);
-        if($this->db->update('tbl_anuncios', ['status' => $st_chck])){
+        if($this->db->update('tbl_anuncios', ['published' => $st_chck])){
           $data = ['type' => 'success','message' => 'Anuncio Actualizado'];
         }else{
           $data = ['type' => 'error','message' => 'Error al actualizar(A)'];
