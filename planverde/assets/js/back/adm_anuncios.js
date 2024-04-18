@@ -49,8 +49,10 @@ function deleteAnuncio($data){
           "_method": "DELETE",
         },
         success: function(e){
+          console.log(e);
           if(is_json(e) && e != []){
             let r = JSON.parse(e);
+            console.log(r);
             if(r.type == "success"){
               Swal.fire({
                 icon: 'success',

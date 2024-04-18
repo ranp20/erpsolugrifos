@@ -3,7 +3,6 @@ class Anuncio extends Admin_Controller{
   public function __construct(){
     parent::__construct();
     $this->load->model('anuncio_model');
-    // $this->load->model('announcements_section_model');
   }
   public function index($id = NULL){
     $data['all_anios'] = $this->db->get('tbl_anuncios')->result();
@@ -50,6 +49,7 @@ class Anuncio extends Admin_Controller{
         $sub_array[] = $name_section->name;
         // $sub_array[] = $anuncio->name_section;
         $foto = (!empty( $anuncio->foto )) ? '<a href="'.base_url().'uploads/anuncios/fotos/'. $anuncio->foto .'" target="_blank" class="c-prevAdd__link"><img width="40px" alt="'.$anuncio->foto.'" src="'.base_url().'uploads/anuncios/fotos/'. $anuncio->foto .'"></a>' : '';
+        // $foto = (!empty( $anuncio->foto )) ? '<img width="40px" height="40px" alt="'.$anuncio->foto.'" src="https://drive.google.com/uc?export=view&id='. $anuncio->id_image .'">' : '';
         $sub_array[] = $foto;
         $checked = ($anuncio->status == 1) ? "checked" : "";
         $sub_array[] = '<div class="chk__ToggleSwitch" '.$checked."-".$anuncio->status.'>
@@ -73,6 +73,7 @@ class Anuncio extends Admin_Controller{
       redirect('admin/dashboard');
     }
   }
+  // ------------------- GUARDAR ARCHIVOS MULTIMEDIA
   private function guardar_archivo($dir, $name){
     $mi_archivo              = $name;
     $config['upload_path']   = $dir . "/";
@@ -91,49 +92,141 @@ class Anuncio extends Admin_Controller{
     }
     return ($dataUpload = $this->upload->data());
   }
+  // ------------------- GUARDAR ANUNCIO
   public function save_anuncio($id = NULL){
-    $created = true;
-    $edited = true;
-    if (!empty($created) || !empty($edited) && !empty($id)){
-      $dir = "./uploads/anuncios/";
-      if (!is_dir($dir)){
-        mkdir($dir, 0777);
-      }
+    // ------------------ DEFINIR LA RUTA PARA AMBOS CASOS, FOTOS Y ADJUNTOS...
+    $dir = "./uploads/anuncios/";
+    if(!is_dir($dir)){
+      mkdir($dir, 0777);
+    }
+    $dir_foto = trim($dir.'fotos/');
+    $dir_adjunto = trim($dir.'adjuntos/');
+    if(!is_dir($dir_foto)){
+      mkdir($dir_foto, 0777);
+    }
+    if(!is_dir($dir_adjunto)){
+      mkdir($dir_adjunto, 0777);
+    }
 
-      $dir_foto = trim($dir.'fotos/');
-      $dir_adjunto = trim($dir.'adjuntos/');
-      if (!is_dir($dir_foto)){
-        mkdir($dir_foto, 0777);
-      }
-      if (!is_dir($dir_adjunto)){
-        mkdir($dir_adjunto, 0777);
-      }
-
-      $data['titulo']      = $this->input->post('titulo');
+    if(empty($id) || $id == "" || $id == NULL){
+      $data['section_id'] = $this->input->post('section_id');
+      $sectioninfo = $this->db->select('name, id_carpeta')->where('id', $this->input->post('section_id'))->order_by('id', 'DESC')->limit(1)->get('tbl_announcements_section')->row();
+      $data['titulo'] = $this->input->post('titulo');
       $data['descripcion'] = $this->input->post('descripcion');
-      $data_upload_foto    = $this->guardar_archivo($dir_foto, 'foto');
-      $data['foto']        = $data_upload_foto['file_name'];
-      
-      $adjunto = '';
+      $folderparentId = $sectioninfo->id_carpeta;
+      if(isset($_FILES['foto']) && $_FILES['foto']['name'] != ""){
+        $data_upload_foto    = $this->guardar_archivo($dir_foto, 'foto');
+        $data['foto']        = $data_upload_foto['file_name'];
+        if($_FILES['foto']['error'] === UPLOAD_ERR_OK){
+          $file = $_FILES['foto']['tmp_name'];
+          $name = $_FILES['foto']['name'];
+          $description = "Imagen subida a: ".$sectioninfo->name;
+          $upload = uploadFileToDrive($name,$file,$description,$folderparentId);
+          $data['id_image'] = $upload->id;
+        }
+      }
+
       if(isset($_FILES['adjunto']) && $_FILES['adjunto']['name'] != ""){
         $data_upload_adjunto = $this->guardar_archivo($dir_adjunto, 'adjunto');
-        $adjunto     = $data_upload_adjunto['file_name'];
+        $data['adjunto']     = $data_upload_adjunto['file_name'];
+        if($_FILES['adjunto']['error'] === UPLOAD_ERR_OK){
+          $file = $_FILES['adjunto']['tmp_name'];
+          $name = $_FILES['adjunto']['name'];
+          $description = "Archivo subido a: ".$sectioninfo->name;
+          $upload = uploadFileToDrive($name,$file,$description,$folderparentId);
+          $data['id_document'] = $upload->id;
+        }
       }
-      $data['adjunto'] = $adjunto;
       
       $this->anuncio_model->_table_name  = 'tbl_anuncios';
       $this->anuncio_model->_primary_key = "anuncio_id";
       $return_id = $this->anuncio_model->save($data, $id);
       if($return_id){
-        $type = "success";
-        $message = 'Registro Exitoso';
+        $returnanuncio = ['action' => 'created','type' => "success",'message' => "Registo Exitoso", 'anuncio_id' => $return_id];
       }else{
-        $type = "error";
-        $message = 'Fallo el registro';
+        $returnanuncio = ['action' => 'created','type' => "error",'message' => "Falló el registro", 'anuncio_id' => ''];
       }
-      set_message($type, $message);
-      redirect('admin/anuncio');
+    }else{
+      $anuncioinfo = $this->db->select('foto, adjunto, id_image, id_document')->where('anuncio_id', $id)->order_by('anuncio_id', 'DESC')->limit(1)->get('tbl_anuncios')->row();
+      $data['section_id'] = $this->input->post('section_id');
+      $sectioninfo = $this->db->select('name, id_carpeta')->where('id', $this->input->post('section_id'))->order_by('id', 'DESC')->limit(1)->get('tbl_announcements_section')->row();
+      $data['titulo'] = $this->input->post('titulo');
+      $data['descripcion'] = $this->input->post('descripcion');
+      $folderparentId = $sectioninfo->id_carpeta;
+      if(isset($_FILES['foto']) && $_FILES['foto']['name'] != ""){
+        // --------------- ELIMINAR LA FOTO ANTERIOR
+        if($anuncioinfo->foto != ""){
+          $filePath = $dir_foto . $anuncioinfo->foto;
+          if(file_exists($filePath)){
+            if(unlink($filePath)){
+              // echo "El archivo ha sido eliminado con éxito.";
+            }else{
+              // echo "Hubo un problema al eliminar el archivo.";
+            }
+          }else{
+            // echo "El archivo no existe en el directorio especificado.";
+          }
+        }
+        $data_upload_foto    = $this->guardar_archivo($dir_foto, 'foto');
+        $data['foto']        = $data_upload_foto['file_name'];
+        if($anuncioinfo->id_image != ""){
+          $id_image = driveDelete($anuncioinfo->id_image); // ELIMINAR LA FOTO ANTERIOR SUBIDA EN GOOGLE DRIVE
+        }
+        if($_FILES['foto']['error'] === UPLOAD_ERR_OK){
+          $file = $_FILES['foto']['tmp_name'];
+          $name = $_FILES['foto']['name'];
+          $description = "Imagen subida a: ".$sectioninfo->name;
+          $upload = uploadFileToDrive($name,$file,$description,$folderparentId);
+          $data['id_image'] = $upload->id;
+        }
+      }
+
+      if(isset($_FILES['adjunto']) && $_FILES['adjunto']['name'] != ""){
+        // --------------- ELIMINAR EL ADJUNTO ANTERIOR
+        if($anuncioinfo->adjunto != ""){
+          $filePath = $dir_adjunto . $anuncioinfo->adjunto;
+          $filePathAlternative = $dir_foto . $anuncioinfo->adjunto;
+          if(file_exists($filePath)){
+            if(unlink($filePath)){
+              // echo "El archivo ha sido eliminado con éxito.";
+            }else{
+              // echo "Hubo un problema al eliminar el archivo.";
+            }
+          }else if(file_exists($filePathAlternative)){
+            if(unlink($filePathAlternative)){
+              // echo "El archivo ha sido eliminado con éxito.";
+            }else{
+              // echo "Hubo un problema al eliminar el archivo.";
+            }
+          }else{
+            // echo "El archivo no existe en el directorio especificado.";
+          }
+        }
+        $data_upload_adjunto = $this->guardar_archivo($dir_adjunto, 'adjunto');
+        $data['adjunto']     = $data_upload_adjunto['file_name'];
+        if($anuncioinfo->id_document != ""){
+          $id_document = driveDelete($anuncioinfo->id_document); // ELIMINAR EL ADJUNTO ANTERIOR SUBIDO EN GOOGLE DRIVE
+        }
+        if($_FILES['adjunto']['error'] === UPLOAD_ERR_OK){
+          $file = $_FILES['adjunto']['tmp_name'];
+          $name = $_FILES['adjunto']['name'];
+          $description = "Archivo subido a: ".$sectioninfo->name;
+          $upload = uploadFileToDrive($name,$file,$description,$folderparentId);
+          $data['id_document'] = $upload->id;
+        }
+      }
+      
+      $this->anuncio_model->_table_name  = 'tbl_anuncios';
+      $this->anuncio_model->_primary_key = "anuncio_id";
+      $return_id = $this->anuncio_model->save($data, $id);
+      if($return_id){
+        $returnanuncio = ['action' => 'updated','type' => "success",'message' => "Actualización Exitosa", 'anuncio_id' => $return_id];
+      }else{
+        $returnanuncio = ['action' => 'updated','type' => "error",'message' => "Falló la actualización", 'anuncio_id' => ''];
+      }
     }
+    set_message($returnanuncio['type'], $returnanuncio['message']);
+    redirect('admin/anuncio');
   }
   // ------------------- ACTIVAR/DESACTIVAR ANUNCIO
   function active($id, $status){
@@ -159,8 +252,55 @@ class Anuncio extends Admin_Controller{
   // ------------------- ELIMINAR ANUNCIO
   public function delete_anuncio($id = NULL){
     if(isset($id)){
-      $data_anuncio = $this->db->where('anuncio_id', $id)->get('tbl_anuncios')->row();
+      $data_anuncio = $this->db->select('foto, adjunto, id_image, id_document')->where('anuncio_id', $id)->order_by('anuncio_id', 'DESC')->limit(1)->get('tbl_anuncios')->row();
       if(count($data_anuncio) > 0){
+        // ------------------ DEFINIR LA RUTA PARA AMBOS CASOS, FOTOS Y ADJUNTOS...
+        $dir = "./uploads/anuncios/";
+        $dir_foto = trim($dir.'fotos/');
+        $dir_adjunto = trim($dir.'adjuntos/');
+        // --------------- ELIMINAR LA FOTO ANTERIOR
+        if($data_anuncio->foto != ""){
+          $filePath = $dir_foto . $data_anuncio->foto;
+          if(file_exists($filePath)){
+            if(unlink($filePath)){
+              // echo "El archivo ha sido eliminado con éxito.";
+            }else{
+              // echo "Hubo un problema al eliminar el archivo.";
+            }
+          }else{
+            // echo "El archivo no existe en el directorio especificado.";
+          }
+        }
+        
+        if($data_anuncio->id_image != ""){
+          $id_image = driveDelete($data_anuncio->id_image); // ELIMINAR LA FOTO ANTERIOR SUBIDA EN GOOGLE DRIVE
+        }
+
+        // --------------- ELIMINAR EL ADJUNTO ANTERIOR
+        if($data_anuncio->adjunto != ""){
+          $filePath = $dir_adjunto . $data_anuncio->adjunto;
+          $filePathAlternative = $dir_foto . $data_anuncio->adjunto;
+          if(file_exists($filePath)){
+            if(unlink($filePath)){
+              // echo "El archivo ha sido eliminado con éxito.";
+            }else{
+              // echo "Hubo un problema al eliminar el archivo.";
+            }
+          }else if(file_exists($filePathAlternative)){
+            if(unlink($filePathAlternative)){
+              // echo "El archivo ha sido eliminado con éxito.";
+            }else{
+              // echo "Hubo un problema al eliminar el archivo.";
+            }
+          }else{
+            // echo "El archivo no existe en el directorio especificado.";
+          }
+        }
+
+        if($data_anuncio->id_document != ""){
+          $id_document = driveDelete($data_anuncio->id_document); // ELIMINAR EL ADJUNTO ANTERIOR SUBIDO EN GOOGLE DRIVE
+        }
+
         if($this->db->where('anuncio_id', $id)->delete('tbl_anuncios')){
           $data = ['type' => 'success','message'=>'Registro Eliminado con Exito!!'];
         }else{

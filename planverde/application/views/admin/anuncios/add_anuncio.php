@@ -44,7 +44,7 @@
   <div class="form-group mb0">
     <div class="col-sm-12">
       <label class="control-label">Foto</label>
-      <input type="file" name="foto" id="foto" class="form-control" accept=".png, .jpg, .jpeg" required value="<?php echo (isset($anuncio_info->foto)) ? $anuncio_info->foto : ''; ?>">
+      <input type="file" name="foto" id="foto" class="form-control" accept=".png, .jpg, .jpeg" <?php echo (isset($anuncio_info) ? '' : 'required') ?> value="<?php echo (isset($anuncio_info->foto)) ? $anuncio_info->foto : ''; ?>">
       <span class="file-custom text-left"><?php echo (isset($anuncio_info->foto)) ? $anuncio_info->foto : ''; ?></span>
       <div class="progress_bar"><div class="percent">0%</div></div>
     </div>
@@ -53,6 +53,7 @@
     <div class="col-sm-12">
       <label class="control-label">Adjunto</label>
       <input type="file" name="adjunto" id="adjunto" class="form-control">
+      <span class="file-custom text-left"><?php echo (isset($anuncio_info->adjunto)) ? $anuncio_info->adjunto : ''; ?></span>
       <div class="progress_bar"><div class="percent">0%</div></div>
     </div>
   </div>

@@ -93,19 +93,6 @@ class Cliente extends Admin_Controller{
   }
   // ------------------- GUARDAR CLIENTE
   public function save_cliente($id = NULL){
-
-    // if(empty($id) || $id == "" || $id == NULL){
-    //   echo "No existe ID de cliente";
-    // }else{
-    //   echo "Existe ID de cliente";
-    // }
-    // if(!isset($_POST['direccion_sede_new']) || !isset($_POST['direccion_sede_update'])){
-    //   echo "Existe al menos uno de ellos";
-    // }else{
-    //   echo "No existe ninguno";
-    // }
-    // exit();
-
     if(empty($id) || $id == "" || $id == NULL){
       // ------------- AGREGAR CLIENTE ------------- 
       if($this->db->where(['ruc' => $this->input->post('ruc')])->get('tbl_cliente')->row()){

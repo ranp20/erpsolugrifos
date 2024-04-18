@@ -33,9 +33,36 @@ class Announcements_section extends Admin_Controller{
       $folder = driveCreate($name_folder, $folderparentId, $description_folder); // CREACIÓN DE LA CARPETA EN GOOGLE DRIVE
       $data_update['id_carpeta'] = $folder->id; // OBTENEMOS EL ID DE LA CARPETA SUBIDA EN GOOGLE DRIVE
       $id_update = $this->announcements_section_model->save($data_update, $return_id); // ACTUALIZAMOS EL REGISTRO CON LA NUEVA "ID_CARPETA"
-      $returnannouncement_section = ['action' => 'created','type' => 'success','message' => 'Sección creada','announcement_section_id' => $return_id];
+      if($id_update){
+        $returnannouncement_section = ['action' => 'created','type' => 'success','message' => 'Sección creada','announcement_section_id' => $return_id];
+      }else{
+        $returnannouncement_section = ['action' => 'created','type' => 'error','message' => 'Fallo al registrar','announcement_section_id' => ''];
+      }
     }else{
-      echo "Any ID";
+      $data_old = $this->db->get_where('tbl_announcements_section', ['id' => $id])->row();
+      $old_folderId = $data_old->id_carpeta;
+      $data['name'] = $this->input->post('titulo');
+      $this->announcements_section_model->_table_name  = 'tbl_announcements_section';
+      $this->announcements_section_model->_primary_key = "id";
+      $return_id = $this->announcements_section_model->save($data, $id);
+      if($old_folderId == "" || $old_folderId == NULL){
+        $name_folder = $this->input->post('titulo'); // NUEVO NOMBRE PARA LA CARPETA EN GOOGLE DRIVE
+        $folderparentId = getIdMainFolder("anuncios"); // OBTENEMOS EL ID DE LA CARPETA RAÍZ EN GOOGLE DRIVE
+        $description_folder = 'Sección de anuncio: "ID_NOMBRE" - ('.$return_id.'_'.$name_folder.')'; // AGREGAR UNA BREVE DESCRIPCIÓN A LA CARPETA
+        $folder = driveCreate($name_folder, $folderparentId, $description_folder); // CREACIÓN DE LA CARPETA EN GOOGLE DRIVE
+        $data_update['id_carpeta'] = $folder->id; // OBTENEMOS EL ID DE LA CARPETA SUBIDA EN GOOGLE DRIVE
+        $id_update = $this->announcements_section_model->save($data_update, $return_id); // ACTUALIZAMOS EL REGISTRO CON LA NUEVA "ID_CARPETA"
+      }else{
+        $name_folder = $this->input->post('titulo'); // NUEVO NOMBRE PARA LA CARPETA EN GOOGLE DRIVE
+        $description_folder = 'Sección de anuncio: "ID_NOMBRE" - ('.$return_id.'_'.$name_folder.')'; // AGREGAR UNA BREVE DESCRIPCIÓN A LA CARPETA
+        $folder = driveUpdate($old_folderId, $name_folder,$description_folder); // CREACIÓN DE LA CARPETA EN GOOGLE DRIVE
+      }
+      if($return_id){
+        $returnannouncement_section = ['action' => 'updated','type' => 'success','message' => 'Actualización exitosa','announcement_section_id' => $old_folderId];
+      }else{
+        $returnannouncement_section = ['action' => 'updated','type' => 'error','message' => 'Falló al actualizar','announcement_section_id' => ''];
+      }
+      
     }
     set_message($returnannouncement_section['type'], $returnannouncement_section['message']);
     redirect('admin/announcements_section');
