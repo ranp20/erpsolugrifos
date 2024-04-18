@@ -57,13 +57,18 @@ class Categoria extends Admin_Controller{
       $this->categoria_model->_table_name = 'tbl_categoria';
       $this->categoria_model->_primary_key = "categoria_id";
       $return_id = $this->categoria_model->save($data, $id); // DEVOLVEMOS EL ID DE LA NUEVA CATEGORÍA
-      $name_folder = $return_id . '_' . $this->input->post('nombre_categoria'); // NUEVO NOMBRE PARA LA CARPETA EN GOOGLE DRIVE
-      $folderparentId = getIdMainFolder(); // OBTENEMOS EL ID DE LA CARPETA RAÍZ EN GOOGLE DRIVE
-      $description_folder = 'Categoría con formato de nombre: "ID - NOMBRE" ('.$name_folder.')'; // AGREGAR UNA BREVE DESCRIPCIÓN A LA CARPETA
-      $folder = driveCreate($name_folder, $folderparentId, $description_folder); // CREACIÓN DE LA CARPETA EN GOOGLE DRIVE
-      $data_update['id_carpeta'] = $folder->id; // OBTENEMOS EL ID DE LA CARPETA SUBIDA EN GOOGLE DRIVE
-      $id_update = $this->categoria_model->save($data_update, $return_id); // ACTUALIZAMOS EL REGISTRO CON LA NUEVA "ID_CARPETA"
-      $returncategory = ['action' => 'created','categoria_id' => $id_update]; // AGRUPAMOS DENTRO DE ARRAY PARA VALIDAR EL MENSAJE DE CONFIRMACIÓN
+      if($return_id){
+        $name = $this->input->post('nombre_categoria'); // NUEVO NOMBRE PARA LA CARPETA EN GOOGLE DRIVE
+        $name_folder = $return_id . '_' . $this->input->post('nombre_categoria'); // NUEVO NOMBRE PARA LA CARPETA EN GOOGLE DRIVE
+        $folderparentId = getIdMainFolder('documentos'); // OBTENEMOS EL ID DE LA CARPETA RAÍZ EN GOOGLE DRIVE
+        $description_folder = 'Categoría con formato de nombre: "ID - NOMBRE" ('.$name_folder.')'; // AGREGAR UNA BREVE DESCRIPCIÓN A LA CARPETA
+        $folder = driveCreate($name, $folderparentId, $description_folder); // CREACIÓN DE LA CARPETA EN GOOGLE DRIVE
+        $data_update['id_carpeta'] = $folder->id; // OBTENEMOS EL ID DE LA CARPETA SUBIDA EN GOOGLE DRIVE
+        $id_update = $this->categoria_model->save($data_update, $return_id); // ACTUALIZAMOS EL REGISTRO CON LA NUEVA "ID_CARPETA"
+        $returncategory = ['action' => 'created','type' => "success",'message' => "Registo Exitoso", 'categoria_id' => $id_update]; // AGRUPAMOS DENTRO DE ARRAY PARA VALIDAR EL MENSAJE DE CONFIRMACIÓN
+      }else{
+        $returncategory = ['action' => 'created','type' => "error",'message' => "Registo fallido", 'categoria_id' => '']; // AGRUPAMOS DENTRO DE ARRAY PARA VALIDAR EL MENSAJE DE CONFIRMACIÓN
+      }
     }else{
       $data_old = $this->db->get_where('tbl_categoria', ['categoria_id' => $id])->row();
       $old_folderId = $data_old->id_carpeta;
@@ -72,31 +77,34 @@ class Categoria extends Admin_Controller{
       $this->categoria_model->_table_name = 'tbl_categoria';
       $this->categoria_model->_primary_key = "categoria_id";
       $return_id = $this->categoria_model->save($data_update, $id);
-      $name_folder = $return_id . '_' . $newName;
-      $description_folder = 'Categoría con formato de nombre: "ID - NOMBRE" ('.$name_folder.')';
-      $folder = driveUpdate($old_folderId, $name_folder, $description_folder);
-      $returncategory = ['action' => 'updated','categoria_id' => $old_folderId];
-      // NOTA: No es necesario pasar el ID de la carpeta ya creada, ya que este es inmutable, a menos que se elimine y/o se vuelva a crear
+      if($return_id){
+        $name = $newName;
+        $name_folder = $return_id . '_' . $newName;
+        $description_folder = 'Categoría con formato de nombre: "ID - NOMBRE" ('.$name_folder.')';
+        $folder = driveUpdate($old_folderId, $name, $description_folder);
+        $returncategory = ['action' => 'updated','categoria_id' => $old_folderId];
+        // NOTA: No es necesario pasar el ID de la carpeta ya creada, ya que este es inmutable, a menos que se elimine y/o se vuelva a crear
+        $returncategory = ['action' => 'updated','type' => "success",'message' => "Actualización exitosa", 'categoria_id' => $return_id];
+      }else{
+        $returncategory = ['action' => 'updated','type' => "error",'message' => "Actualización fallida", 'categoria_id' => ''];
+      }
     }
-    if($returncategory['action'] == "created"){
-      set_message('success', 'Registro exitoso');
-      redirect('admin/categoria/manage_categoria');
-    }else{
-      set_message('success', 'Actualización exitosa');
-      redirect('admin/categoria/manage_categoria');
-    }
+    set_message($returncategory['type'], $returncategory['message']);
+    redirect('admin/categoria/manage_categoria');
   }
-  // ------------------- CREAR TODAS LAS CATEGORÍAS PARA UNA NUEVA CUENTA...
-  public function create_folders_drive(){
+  // ------------------- CREAR TODAS LAS CATEGORÍAS (PARA UNA NUEVA CUENTA)...
+  public function createcategoriesindrive(){
     $this->categoria_model->_table_name = 'tbl_categoria';
     $this->categoria_model->_primary_key = "categoria_id";
     $data = $this->categoria_model->get();
-    $idMainFolder = getIdMainFolder();
+    $idMainFolder = getIdMainFolder('documentos');
     foreach($data as $key => $cat){
-      $name = $cat->categoria_id . '-' . $cat->nombre_categoria;
-      $folder_data = driveCreate($name, $idMainFolder);
-      $data_update['id_carpeta'] = $folder_data->id;
-      $this->categoria_model->save($data_update, $cat->categoria_id);
+      $name = $cat->nombre_categoria;
+      $name_folder = $cat->categoria_id . '_' . $cat->nombre_categoria;
+      $description_folder = 'Categoría con formato de nombre: "ID - NOMBRE" ('.$name_folder.')';
+      $folder_data = driveCreate($name, $idMainFolder, $description_folder);
+      // $data_update['id_carpeta'] = $folder_data->id;
+      // $this->categoria_model->save($data_update, $cat->categoria_id); // CAMBIAR EL ID_CARPETA DE TODAS LAS CATEGORÍAS
     }
   }
   public function cmb_x_sede($sede_id = NULL){

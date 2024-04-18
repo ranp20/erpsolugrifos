@@ -63,55 +63,59 @@ class Subcategoria extends Admin_Controller{
       $data['categoria_id'] = $this->input->post('categoria_id');
       $data['id_carpeta'] = '';
       $return_id = $this->subcategoria_model->save($data, $id); // GUARDAR LA SUBCATEGORÍA EN LA BD
-      $dataByIdCategoria = $this->db->select('nombre_categoria, id_carpeta')->where(['categoria_id' => $data['categoria_id']])->limit(1)->get('tbl_categoria')->result_array(); // OBTENEMOS INFORMACIÓN DE LA CATEGORÍA A PARTIR DEL ID SELECCIONADO
-      $folderparentId = $dataByIdCategoria[0]['id_carpeta'];
-      $folder_name = $return_id.'-'.str_replace(" ", "_", $this->input->post('nombre_subcategoria')); // NOMBRE DE LA CARPETA
-      $folder_description = 'Subcategoría: "'.$this->input->post('nombre_subcategoria').'" dentro de Categoría: '.$dataByIdCategoria[0]['nombre_categoria'];
-      $folder = driveCreate($folder_name, '1d7ApZyElUzpjq7SvnK1p4JJ35ktrgukn', $folder_description);
-      // $folder = driveCreate($folder_name, $folderparentId, $folder_description); // CREAR LA SUBCATEGORÍA EN GOOGLE DRIVE
-      $data_update['id_carpeta'] = $folder->id;
-      $id_update = $this->subcategoria_model->save($data_update, $return_id);
-      $returnsubcategory = ['action' => 'created','subcategoria_id' => $id_update];
+      if($return_id){
+        $dataByIdCategoria = $this->db->select('nombre_categoria, id_carpeta')->where(['categoria_id' => $data['categoria_id']])->limit(1)->get('tbl_categoria')->result_array(); // OBTENEMOS INFORMACIÓN DE LA CATEGORÍA A PARTIR DEL ID SELECCIONADO
+        $folderparentId = $dataByIdCategoria[0]['id_carpeta'];
+        $folder_name = $return_id.'-'.str_replace(" ", "_", $this->input->post('nombre_subcategoria')); // NOMBRE DE LA CARPETA
+        $folder_description = 'Subcategoría: "'.$this->input->post('nombre_subcategoria').'" dentro de Categoría: '.$dataByIdCategoria[0]['nombre_categoria'];
+        $folder = driveCreate($folder_name, '1d7ApZyElUzpjq7SvnK1p4JJ35ktrgukn', $folder_description); // LÍNEA MOMENTÁNEA (PRUEBAS)
+        // $folder = driveCreate($folder_name, $folderparentId, $folder_description); // CREAR LA SUBCATEGORÍA EN GOOGLE DRIVE
+        $data_update['id_carpeta'] = $folder->id;
+        $id_update = $this->subcategoria_model->save($data_update, $return_id);
+        $returnsubcategory = ['action' => 'created','type' => "success",'message' => "Registro exitoso", 'subcategoria_id' => $return_id];
+      }else{
+        $returnsubcategory = ['action' => 'created','type' => "error",'message' => "Registro fallido", 'subcategoria_id' => ''];
+      }
     }else{
       $newName = $this->input->post('nombre_subcategoria');
       $data['nombre_subcategoria'] = $newName;
       $data['categoria_id'] = $this->input->post('categoria_id');
       $return_id = $this->subcategoria_model->save($data, $id);
-      $dataByIdCategoria = $this->db->select('nombre_categoria')->where(['categoria_id' => $data['categoria_id']])->limit(1)->get('tbl_categoria')->result_array(); // OBTENEMOS INFORMACIÓN DE LA CATEGORÍA A PARTIR DEL ID SELECCIONADO
-      $data_old = $this->db->select('nombre_subcategoria, id_carpeta')->where(['subcategoria_id' => $id])->limit(1)->get('tbl_subcategoria')->result_array();
-      $name_subcategoria = $data_old[0]['nombre_subcategoria'];
-      $folderId = $data_old[0]['id_carpeta'];
-      $folder_name = $id.'-'.str_replace(" ", "_", $name_subcategoria);
-      $folder_description = 'Subcategoría: "'.$this->input->post('nombre_subcategoria').'" dentro de Categoría: '.$dataByIdCategoria[0]['nombre_categoria'];
-      $folder = driveUpdate($folderId, $folder_name, $folder_description);
-      $returnsubcategory = ['action' => 'updated','subcategoria_id' => $return_id];
+      if($return_id){
+        $dataByIdCategoria = $this->db->select('nombre_categoria')->where(['categoria_id' => $data['categoria_id']])->limit(1)->get('tbl_categoria')->result_array(); // OBTENEMOS INFORMACIÓN DE LA CATEGORÍA A PARTIR DEL ID SELECCIONADO
+        $data_old = $this->db->select('nombre_subcategoria, id_carpeta')->where(['subcategoria_id' => $id])->limit(1)->get('tbl_subcategoria')->result_array();
+        $name_subcategoria = $data_old[0]['nombre_subcategoria'];
+        $folderId = $data_old[0]['id_carpeta'];
+        $folder_name = $id.'-'.str_replace(" ", "_", $name_subcategoria);
+        $folder_description = 'Subcategoría: "'.$this->input->post('nombre_subcategoria').'" dentro de Categoría: '.$dataByIdCategoria[0]['nombre_categoria'];
+        $folder = driveUpdate($folderId, $folder_name, $folder_description);
+        $returnsubcategory = ['action' => 'updated','type' => "success",'message' => "Actualización exitosa", 'subcategoria_id' => $return_id];
+      }else{
+        $returnsubcategory = ['action' => 'updated','type' => "error",'message' => "Actualización fallida", 'subcategoria_id' => ''];
+      }
     }
-    if($returnsubcategory['action'] == "created"){
-      set_message('success', 'Registro exitoso');
-      redirect('admin/subcategoria');
-    }else{
-      set_message('success', 'Actualización exitosa');
-      redirect('admin/subcategoria');
-    }
+    set_message($returnsubcategory['type'], $returnsubcategory['message']);
+    redirect('admin/subcategoria');
   }
   // ------------------- CREAR TODAS LAS SUBCATEGORÍAS PARA UNA NUEVA CUENTA...
-  public function create_folders_drive(){
+  public function createsubcategoriesindrive(){
     $this->categoria_model->_table_name = 'tbl_categoria';
     $this->categoria_model->_primary_key = "categoria_id";
     $data_categoria = $this->categoria_model->get();
     $this->subcategoria_model->_table_name = 'tbl_subcategoria';
     $this->subcategoria_model->_primary_key = "subcategoria_id";
-    foreach ($data_categoria as $key => $cat){
+    foreach($data_categoria as $key => $cat){
       $idFolderParent = $cat->id_carpeta;
       $data = $this->subcategoria_model->get_by(['categoria_id' => $cat->categoria_id]);
-      foreach ($data as $key => $subcat){
-        $name = $subcat->subcategoria_id . '-' . $subcat->nombre_subcategoria;
-        $folder_data = driveCreate($name, $idFolderParent);
-        $data_update['id_carpeta'] = $folder_data->id;
-        $this->subcategoria_model->save($data_update, $subcat->subcategoria_id);
+      foreach($data as $key => $subcat){
+        $name = $subcat->nombre_subcategoria;
+        $name_folder = $subcat->subcategoria_id . '-' . $subcat->nombre_subcategoria;
+        $description_description = 'Subcategoría: "'.$subcat->nombre_subcategoria.'" dentro de Categoría: '.$cat->nombre_categoria;
+        $folder_data = driveCreate($name, $idFolderParent, $description_description);
+        // $data_update['id_carpeta'] = $folder_data->id;
+        // $this->subcategoria_model->save($data_update, $subcat->subcategoria_id); // CAMBIAR EL ID_CARPETA DE TODAS LAS SUBCATEGORÍAS
       };
     };
-    exit();
   }
   // ------------------- ELIMINAR SUBCATEGORÍA
   public function delete_subcategoria($id = NULL){

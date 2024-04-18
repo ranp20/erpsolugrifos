@@ -86,8 +86,8 @@ class Anio extends Admin_Controller{
             $return_id = $this->anio_model->save($data, $id);
             $description_folder = 'Año para subcategoría: '.$subcat->nombre_subcategoria;
             // CREAR EL NUEVO AÑO A MODO DE CARPETA DENTRO DE TODAS LAS SUBCATEGORÍAS EXISTENTES DENTRO DE CADA CATEGORÍA...
-            // $folder = driveCreate($anio_name, $subcat->id_carpeta, 'Año para subcategoría: '.$subcat->nombre_subcategoria);
-            $folder = driveCreate($anio_name, '1d7ApZyElUzpjq7SvnK1p4JJ35ktrgukn', $description_folder); // LÍNEA MOMENTÁNEA
+            // $folder = driveCreate($anio_name, $subcat->id_carpeta, $description_folder);
+            $folder = driveCreate($anio_name, '1d7ApZyElUzpjq7SvnK1p4JJ35ktrgukn', $description_folder); // LÍNEA MOMENTÁNEA (PRUEBAS)
             $data_update['id_carpeta'] = $folder->id;
             $id_update = $this->anio_model->save($data_update, $return_id);
           }else{
@@ -97,8 +97,11 @@ class Anio extends Admin_Controller{
           $countSubcategories++;
         }
       }
-
-      $returnyear = ['action' => 'created','anio_id' => $anio_id];
+      if($anio_id){
+        $returnyear = ['action' => 'created','type' => "success",'message' => "Registro exitoso", 'anio_id' => $anio_id];
+      }else{
+        $returnyear = ['action' => 'created','type' => "error",'message' => "Registro fallido", 'anio_id' => ''];
+      }
     }else{
       $anioWithoutSpaces = str_replace(" ", "", $_POST['anio']);
       $data_anio_exist = $this->db->where(['anio' => $anioWithoutSpaces])->get('tbl_anio')->row();
@@ -147,18 +150,53 @@ class Anio extends Admin_Controller{
           $countSubcategories++;
         }
       }
-
-      $returnyear = ['action' => 'updated','anio_id' => $anio_id];
+      if($anio_id){
+        $returnyear = ['action' => 'updated','type' => "success",'message' => "Actualización exitosa", 'anio_id' => $anio_id];
+      }else{
+        $returnyear = ['action' => 'updated','type' => "error",'message' => "Actualización fallida", 'anio_id' => ''];
+      }
     }
-
-    if($returnyear['action'] == "created"){
-      set_message('success', 'Registro exitoso');
-      redirect('admin/anio');
-    }else{
-      set_message('success', 'Actualización exitosa');
-      redirect('admin/anio');
-    }
+    set_message($returnyear['type'], $returnyear['message']);
+    redirect('admin/anio');
   }
+  // ------------------- CREAR TODAS LAS SUBCATEGORÍAS PARA UNA NUEVA CUENTA...
+  // public function createaniosindrive(){
+  //   // $this->anio_model->_table_name = 'tbl_anio';
+  //   // $this->anio_model->_primary_key = "anio_id";
+  //   // $data_anio = $this->anio_model->get();
+  //   // $counanios = count($data_anio);
+  //   // $counaniosarr = 0;
+  //   // echo "<pre>";
+  //   // print_r($data_anio);
+  //   // echo "</pre>";
+  //   // exit();
+
+  //   // $this->categoria_model->_table_name = 'tbl_categoria';
+  //   // $this->categoria_model->_primary_key = "categoria_id";
+  //   // $data_categoria = $this->categoria_model->get();
+  //   // $this->subcategoria_model->_table_name = 'tbl_subcategoria';
+  //   // $this->subcategoria_model->_primary_key = "subcategoria_id";
+  //   // $this->anio_model->_table_name = 'tbl_detail_anio';
+  //   // $this->anio_model->_primary_key = "detail_anio_id";
+  //   // foreach($data_categoria as $key => $cat){
+  //   //   $data = $this->subcategoria_model->get_by(['categoria_id' => $cat->categoria_id]);
+  //   //   foreach($data as $key => $subcat){
+  //   //     // echo $data_anio[$counaniosarr]->anio_id."<br>";
+  //   //     // $data_detailanio = $this->db->get_where('tbl_detail_anio', [
+  //   //     //   'anio' => $anio_id,
+  //   //     //   'id_carpeta' => $validdatadetailanio[$countSubcategories]->id_carpeta,
+  //   //     //   'categoria_id' => $subcat->categoria_id,
+  //   //     //   'subcategoria_id' => $subcat->subcategoria_id
+  //   //     // ])->result();
+  //   //     // $description_folder = 'Año para subcategoría: '.$subcat->nombre_subcategoria;
+  //   //     // CREAR EL NUEVO AÑO A MODO DE CARPETA DENTRO DE TODAS LAS SUBCATEGORÍAS EXISTENTES DENTRO DE CADA CATEGORÍA...
+  //   //     // $folder = driveCreate($anio_name, $subcat->id_carpeta, 'Año para subcategoría: '.$subcat->nombre_subcategoria);
+  //   //     // $folder = driveCreate($anio_name, '1d7ApZyElUzpjq7SvnK1p4JJ35ktrgukn', $description_folder); // LÍNEA MOMENTÁNEA
+  //   //     // $data_update['id_carpeta'] = $folder->id;
+  //   //     // $id_update = $this->anio_model->save($data_update, $return_id); // CAMBIAR EL ID_CARPETA DE TODOS LOS AÑOS
+  //   //   };
+  //   // };
+  // }
   // ------------------- ELIMINAR AÑO
   public function delete_anio($id = NULL){
     $mensajeAgregado = false;

@@ -67,19 +67,4 @@
     </table>
   </div>
 </div>
-<script>
-  $(document).on('click', '.delete-document', function() {
-    if (confirm('Desea elminar El Registro??')) {
-      let id = $(this).data('id')
-      $.ajax({
-        type: "POST",
-        url: base_url + 'admin/document_client/delete_document/' + id,
-        dataType: "json",
-        success: function(data) {
-          toastr[data.type](data.message)
-          reload_table()
-        }
-      });
-    }
-  });
-</script>
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/js/back/adm_documents.js"></script>
