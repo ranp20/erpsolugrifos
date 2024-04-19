@@ -4,7 +4,6 @@ if (!defined('BASEPATH'))
 ini_set('memory_limit', '-1');
 ini_set('max_execution_time', 3600);
 
-
 $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
 $url_base =  $actual_link . "/";
 
@@ -88,10 +87,10 @@ class Document_client extends Admin_Controller{
     $category_id = $data_subcategory->categoria_id;
     $subcategory_name = $data_subcategory->id_carpeta;
     $category_name = $this->db->get_where('tbl_categoria', array('categoria_id' => $category_id))->row()->nombre_categoria;
-    $data_anio = $this->db->where(['anio' => $this->input->post('anio'), 'subcategoria_id' => $data_subcategory->subcategoria_id])->get('tbl_detail_anio')->row();
+    $data_anio = $this->db->where(['anio' => $this->input->post('anio'), 'subcategoria_id' => $data_subcategory->subcategoria_id])->get('tbl_detail_anio')->row();    
     if(empty($id) || $id == "" || $id == NULL){      
-      // $folderparentId = $data_anio->id_carpeta;
-      $folderparentId = '1d7ApZyElUzpjq7SvnK1p4JJ35ktrgukn'; // LÍNEA MOMENTÁNEA (PRUEBAS)
+      $folderparentId = $data_anio->id_carpeta;
+      // $folderparentId = '1d7ApZyElUzpjq7SvnK1p4JJ35ktrgukn'; // LÍNEA MOMENTÁNEA (PRUEBAS)
       $id_archivo = "";
       if(isset($_FILES['files']) && $_FILES['files']['name'] != ""){
         if($_FILES['files']['error'] === UPLOAD_ERR_OK){

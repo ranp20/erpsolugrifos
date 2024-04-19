@@ -48,20 +48,26 @@
       <tbody>
         <?php 
         if( isset($all_documents) && count( $all_documents ) > 0 ): 
-          foreach ($all_documents as $key => $document) :
-            $document = (object) $document;
+          foreach ($all_documents as $key => $doc) :
+            $document = (object) $doc;
         ?>
-            <tr>
-              <td><?php echo cambiaf_mysql($document->created_at);?></td>
-              <td><?php echo $document->anio;?></td>
-              <td><?php echo $document->mes;?></td>
-              <td><?php echo $document->nombre;?></td>
-              <td>
-                <a target="_blank" data-toggle="tooltip" data-placement="top" class="btn btn-primary btn-xs" title="Click Para ver" href="<?=  $document->ruta ?>">
-                    <span class="fa fa-download"></span>
-                </a>
-              </td>
-            </tr>
+        <tr>
+          <td class="col-md-4"><?php echo cambiaf_mysql($document->created_at);?></td>
+          <td class="col-md-1"><?php echo $document->anio;?></td>
+          <td class="col-md-1"><?php echo $document->mes;?></td>
+          <td class="col-md-4"><?php echo $document->nombre;?></td>
+          <td class="col-md-2">
+            <a target="_blank" data-toggle="tooltip" data-placement="top" class="btn btn-primary btn-xs" title="Click Para ver" href="<?=  $document->ruta ?>">
+              <span class="fa fa-eye"></span>
+            </a>
+            <a target="_blank" data-toggle="tooltip" data-placement="top" class="btn btn-primary btn-xs" title="Click Para ver" href="<?= $document->id_archivo ?>">
+              <!-- <span class="fa fa-download"></span> -->
+              <!-- <span class="fa fa-arrow-down"></span> -->
+              <span class="fa fa-cloud-download"></span>
+              <!-- <span class="fa fa-arrow-circle-down"></span> -->
+            </a>
+          </td>
+        </tr>
         <?php
           endforeach;
         ?>

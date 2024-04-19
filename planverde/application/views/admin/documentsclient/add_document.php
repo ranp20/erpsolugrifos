@@ -1,124 +1,124 @@
 <div class="panel panel-custom">
-    <div class="panel-heading panelCtm__header">
-      <header>
-        <h3 class="mt-0"><?= $title;?></h3>
-      </header>
-      <button type="button" class="close" data-dismiss="modal">
-        <span aria-hidden="true">&times;</span>
-        <span class="sr-only">Close</span>
-      </button>
-    </div>
-    <?php echo form_open(base_url('admin/document_client/save_document'), array('id' => 'document_client', 'class' => 'form-horizontal', "enctype" => "multipart/form-data")); ?>
-    <div class="form-group">
-        <label class="col-lg-3 control-label">Cliente</label>
-        <div class="col-lg-6">
-            <div class="input-group">
-                <select name="cliente_id" id="cliente_id" class="form-control select_box" style="width: 100%" required>
-                    <option value=""><?= lang('select_a_client_1') ?></option>
-                    <?php
-                    if(!empty($all_clients)){
-                        foreach($all_clients as $client){
-                          $client = (object) $client;
-                        ?>
-                          <option value="<?= $client->cliente_id ?>"><?= $client->ruc . ' - ' . $client->razon_social ?></option>
-                        <?php
-                        }
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-lg-3 control-label">Sede</label>
-        <div class="col-lg-6">
-            <div class="input-group sede w-100">
-                <select name="" id="" class="select-box form-control w-100">
-                    <option value=""><?= lang('select_a_location_1')?></option>
-                </select>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-lg-3 control-label">Categoría</label>
-        <div class="col-lg-6">
-            <div class="input-group categorias w-100">
-                <select name="" id="" class="select-box form-control w-100">
-                    <option value=""><?= lang('select_a_category_1')?></option>
-                </select>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-3 control-label">Nombre</label>
-        <div class="col-lg-6">
-            <input type="text" name="nombre" class="form-control" placeholder="<?= lang('name_of_document') ?>" required>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-3 control-label">Año</label>
-        <div class="col-lg-6">
-            <select name="anio" class="form-control select_box" style="width: 100%" required>
-            <option value=""><?= lang('select_a_year_1') ?></option>
-            <?php
-            if (!empty($all_anios)) {
-              foreach ($all_anios as $anio) {
-                $anio = (object) $anio;
+  <div class="panel-heading panelCtm__header">
+    <header>
+      <h3 class="mt-0"><?= $title;?></h3>
+    </header>
+    <button type="button" class="close" data-dismiss="modal">
+      <span aria-hidden="true">&times;</span>
+      <span class="sr-only">Close</span>
+    </button>
+  </div>
+  <?php echo form_open(base_url('admin/document_client/save_document'), array('id' => 'document_client', 'class' => 'form-horizontal', "enctype" => "multipart/form-data")); ?>
+  <div class="form-group">
+    <label class="col-lg-3 control-label">Cliente</label>
+    <div class="col-lg-6">
+      <div class="input-group">
+        <select name="cliente_id" id="cliente_id" class="form-control select_box" style="width: 100%" required>
+          <option value=""><?= lang('select_a_client_1') ?></option>
+          <?php
+          if(!empty($all_clients)){
+            foreach($all_clients as $client){
+              $client = (object) $client;
             ?>
-                <option value="<?= $anio->anio_id ?>"><?= $anio->anio ?></option>
+              <option value="<?= $client->cliente_id ?>"><?= $client->ruc . ' - ' . $client->razon_social ?></option>
             <?php
-              }
             }
-            ?>
-            </select>
-        </div>
+          }
+          ?>
+        </select>
+      </div>
     </div>
-    <div class="form-group">
-        <label class="col-lg-3 control-label">Mes</label>
-        <div class="col-lg-6">
-            <div class="input-group">
-                <select name="mes" class="form-control select_box" style="width: 100%" required>
-                  <option value=""><?= lang('select_a_month_1') ?></option>
-                  <?php
-                  /* if (!empty($all_categories)) {
-                    foreach ($all_categories as $cate) {
-                      $cate = (object) $cate; */
-                  ?>
-                  <option value="ENERO">ENERO</option>
-                  <option value="FEBRERO">FEBRERO</option>
-                  <option value="MARZO">MARZO</option>
-                  <option value="ABRIL">ABRIL</option>
-                  <option value="MAYO">MAYO</option>
-                  <option value="JUNIO">JUNIO</option>
-                  <option value="JULIO">JULIO</option>
-                  <option value="AGOSTO">AGOSTO</option>
-                  <option value="SETIEMBRE">SETIEMBRE</option>
-                  <option value="OCTUBRE">OCTUBRE</option>
-                  <option value="NOVIEMBRE">NOVIEMBRE</option>
-                  <option value="DICIEMBRE">DICIEMBRE</option>
-                  <?php
-                  /*  }
-                  } */
-                  ?>
-                </select>
-            </div>
-        </div>
+  </div>
+  <div class="form-group">
+    <label class="col-lg-3 control-label">Sede</label>
+    <div class="col-lg-6">
+      <div class="input-group sede w-100">
+        <select name="" id="" class="select-box form-control w-100">
+          <option value=""><?= lang('select_a_location_1')?></option>
+        </select>
+      </div>
     </div>
-    <div class="form-group">
-        <label class="col-sm-3 control-label">Adjunto</label>
-        <div class="col-lg-6">
-            <input type="file" name="files" id="files" class="form-control" placeholder="<?= ('Año') ?>" required>
-            <div class="progress_bar"><div class="percent">0%</div></div>
-        </div>
+  </div>
+  <div class="form-group">
+    <label class="col-lg-3 control-label">Categoría</label>
+    <div class="col-lg-6">
+      <div class="input-group categorias w-100">
+        <select name="" id="" class="select-box form-control w-100">
+          <option value=""><?= lang('select_a_category_1')?></option>
+        </select>
+      </div>
     </div>
-    <div class="form-group mt">
-        <label class="col-lg-3"></label>
-        <div class="col-lg-6">
-            <button type="submit" class="btn btn-sm btn-primary"><?= lang('save') ?></button>
-            <button type="button" class="btn btn-default" data-dismiss="modal"><?= lang('Cerrar') ?></button>
-        </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-3 control-label">Nombre</label>
+    <div class="col-lg-6">
+      <input type="text" name="nombre" class="form-control" placeholder="<?= lang('name_of_document') ?>" required>
     </div>
-    <?php echo form_close(); ?>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-3 control-label">Año</label>
+    <div class="col-lg-6">
+      <select name="anio" class="form-control select_box" style="width: 100%" required>
+      <option value=""><?= lang('select_a_year_1') ?></option>
+      <?php
+      if (!empty($all_anios)) {
+        foreach ($all_anios as $anio) {
+          $anio = (object) $anio;
+      ?>
+        <option value="<?= $anio->anio_id ?>"><?= $anio->anio ?></option>
+      <?php
+        }
+      }
+      ?>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-lg-3 control-label">Mes</label>
+    <div class="col-lg-6">
+      <div class="input-group">
+        <select name="mes" class="form-control select_box" style="width: 100%" required>
+          <option value=""><?= lang('select_a_month_1') ?></option>
+          <?php
+          /* if (!empty($all_categories)) {
+            foreach ($all_categories as $cate) {
+              $cate = (object) $cate; */
+          ?>
+          <option value="ENERO">ENERO</option>
+          <option value="FEBRERO">FEBRERO</option>
+          <option value="MARZO">MARZO</option>
+          <option value="ABRIL">ABRIL</option>
+          <option value="MAYO">MAYO</option>
+          <option value="JUNIO">JUNIO</option>
+          <option value="JULIO">JULIO</option>
+          <option value="AGOSTO">AGOSTO</option>
+          <option value="SETIEMBRE">SETIEMBRE</option>
+          <option value="OCTUBRE">OCTUBRE</option>
+          <option value="NOVIEMBRE">NOVIEMBRE</option>
+          <option value="DICIEMBRE">DICIEMBRE</option>
+          <?php
+          /*  }
+          } */
+          ?>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-3 control-label">Adjunto</label>
+    <div class="col-lg-6">
+      <input type="file" name="files" id="files" class="form-control" placeholder="<?= ('Año') ?>" required>
+      <div class="progress_bar"><div class="percent">0%</div></div>
+    </div>
+  </div>
+  <div class="form-group mt">
+    <label class="col-lg-3"></label>
+    <div class="col-lg-6">
+      <button type="submit" class="btn btn-sm btn-primary btn-tocreated"><?= lang('save') ?></button>
+      <button type="button" class="btn btn-default" data-dismiss="modal"><?= lang('Cerrar') ?></button>
+    </div>
+  </div>
+  <?php echo form_close(); ?>
 </div>
 <script type="text/javascript">
   $(document).on("submit", "form", function(event) {

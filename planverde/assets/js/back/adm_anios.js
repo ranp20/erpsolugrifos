@@ -1,4 +1,40 @@
 $(() => {
+  $(document).on("submit","form#anio",function(e){
+    let formIsValid = true;
+    $(this).find('input[required]').each(function(){
+      if($(this).val() === ''){
+        formIsValid = false;
+        // $(this).addClass('input-error');
+      }else{
+        // $(this).removeClass('input-error');
+      }
+    });
+    if(!formIsValid){
+      event.preventDefault();
+    }else{
+      $(this).find('button, input[type="button"]').prop('disabled', true);
+      if($(this).find('button[type="submit"]').hasClass("btn-tocreated")){
+        $(`<div id="loading-indicator-tomoreforce">
+          <div class="loading-indicator__c">
+            <div class="hourglass"></div>
+            <div class="loading-indicator__c--cMssg">
+              <span>Creando registro...</span>
+            </div>
+          </div>
+        </div>`).insertBefore('body > .wrapper');
+      }else{
+        $(`<div id="loading-indicator-tomoreforce">
+          <div class="loading-indicator__c">
+            <div class="hourglass"></div>
+            <div class="loading-indicator__c--cMssg">
+              <span>Actualizando registro...</span>
+            </div>
+          </div>
+        </div>`).insertBefore('body > .wrapper');
+      }      
+      $(this).find('button[type="submit"]').addClass('submit-clicked');
+    }
+  });
   // ------------ ELIMINAR AÑO
   $(document).on('click','.delete-anio', function(){
     let id = $(this).data('id');
