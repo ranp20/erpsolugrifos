@@ -12,15 +12,6 @@
   <div class="form-group">
     <div class="col-sm-12">    
       <label class="control-label">
-        <span>Nombre SubCategoría</span>
-        <span class="text-danger"> *</span>
-      </label>
-      <input type="text" name="nombre_subcategoria" class="form-control" placeholder="Nombre de subcategoría" value="<?php echo (isset($subcategory_info->nombre_subcategoria)) ? $subcategory_info->nombre_subcategoria : ''; ?>" required>
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="col-sm-12">    
-      <label class="control-label">
         <span><?= ('Categoria') ?></span>
         <span class="text-danger"> *</span>
       </label>
@@ -39,6 +30,15 @@
           ?>
         </select>
       </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-12">    
+      <label class="control-label">
+        <span>Nombre SubCategoría</span>
+        <span class="text-danger"> *</span>
+      </label>
+      <input type="text" name="nombre_subcategoria" class="form-control" placeholder="Nombre de subcategoría" value="<?php echo (isset($subcategory_info->nombre_subcategoria)) ? $subcategory_info->nombre_subcategoria : ''; ?>" required>
     </div>
   </div>
   <div class="form-group mt">

@@ -103,8 +103,8 @@ class Categoria extends Admin_Controller{
       $name_folder = $cat->categoria_id . '_' . $cat->nombre_categoria;
       $description_folder = 'Categoría con formato de nombre: "ID - NOMBRE" ('.$name_folder.')';
       $folder_data = driveCreate($name, $idMainFolder, $description_folder);
-      // $data_update['id_carpeta'] = $folder_data->id;
-      // $this->categoria_model->save($data_update, $cat->categoria_id); // CAMBIAR EL ID_CARPETA DE TODAS LAS CATEGORÍAS
+      $data_update['id_carpeta'] = $folder_data->id;
+      $this->categoria_model->save($data_update, $cat->categoria_id); // CAMBIAR EL ID_CARPETA DE TODAS LAS CATEGORÍAS
     }
   }
   public function cmb_x_sede($sede_id = NULL){

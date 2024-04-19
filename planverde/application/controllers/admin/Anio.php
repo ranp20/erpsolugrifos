@@ -84,10 +84,10 @@ class Anio extends Admin_Controller{
             $this->anio_model->_table_name = 'tbl_detail_anio';
             $this->anio_model->_primary_key = "detail_anio_id";
             $return_id = $this->anio_model->save($data, $id);
-            $description_folder = 'Año para subcategoría: '.$subcat->nombre_subcategoria;
+            $description_folder = 'Año'.$anio_name.' para subcategoría: '.$subcat->nombre_subcategoria;
             // CREAR EL NUEVO AÑO A MODO DE CARPETA DENTRO DE TODAS LAS SUBCATEGORÍAS EXISTENTES DENTRO DE CADA CATEGORÍA...
-            // $folder = driveCreate($anio_name, $subcat->id_carpeta, $description_folder);
-            $folder = driveCreate($anio_name, '1d7ApZyElUzpjq7SvnK1p4JJ35ktrgukn', $description_folder); // LÍNEA MOMENTÁNEA (PRUEBAS)
+            $folder = driveCreate($anio_name, $subcat->id_carpeta, $description_folder);
+            // $folder = driveCreate($anio_name, '1d7ApZyElUzpjq7SvnK1p4JJ35ktrgukn', $description_folder); // LÍNEA MOMENTÁNEA (PRUEBAS)
             $data_update['id_carpeta'] = $folder->id;
             $id_update = $this->anio_model->save($data_update, $return_id);
           }else{
@@ -137,14 +137,14 @@ class Anio extends Admin_Controller{
             $this->anio_model->_table_name = 'tbl_detail_anio';
             $this->anio_model->_primary_key = "detail_anio_id";
             $return_id = $this->anio_model->save($data, $id);
-            $description_folder = 'Año para subcategoría: '.$subcat->nombre_subcategoria;
+            $description_folder = 'Año'.$anio_name.' para subcategoría: '.$subcat->nombre_subcategoria;
             // CREAR EL NUEVO AÑO A MODO DE CARPETA DENTRO DE TODAS LAS SUBCATEGORÍAS EXISTENTES DENTRO DE CADA CATEGORÍA...
-            // $folder = driveCreate($anio_name, $subcat->id_carpeta, 'Año para subcategoría: '.$subcat->nombre_subcategoria);
-            $folder = driveCreate($anio_name, '1d7ApZyElUzpjq7SvnK1p4JJ35ktrgukn', $description_folder); // LÍNEA MOMENTÁNEA
+            $folder = driveCreate($anio_name, $subcat->id_carpeta, 'Año para subcategoría: '.$subcat->nombre_subcategoria);
+            // $folder = driveCreate($anio_name, '1d7ApZyElUzpjq7SvnK1p4JJ35ktrgukn', $description_folder); // LÍNEA MOMENTÁNEA
             $data_update['id_carpeta'] = $folder->id;
             $id_update = $this->anio_model->save($data_update, $return_id);
           }else{
-            $description_folder = 'Actualización - Año para subcategoría: '.$subcat->nombre_subcategoria;
+            $description_folder = 'Actualización - Año'.$anio_name.' para subcategoría: '.$subcat->nombre_subcategoria;
             $folder = driveUpdate($data_detailanio[0]->id_carpeta, $anio_name, $description_folder); // CREAR EL NUEVO AÑO A MODO DE CARPETA DENTRO DE TODAS LAS SUBCATEGORÍAS EXISTENTES DENTRO DE CADA CATEGORÍA...
           }
           $countSubcategories++;
