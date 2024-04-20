@@ -60,7 +60,18 @@ class Anuncio extends Admin_Controller{
                         </div>';
         $action = '';
         if(!empty($anuncio->adjunto)){
-          $action .= '<a target="_blank" data-toggle="tooltip" data-placement="top" class="btn btn-primary btn-xs" title="Descargar" href="' . base_url() . 'uploads/anuncios/fotos/' . $anuncio->adjunto . '"><span class="fa fa-download"></span></a>' . ' ';
+          $dir = "./uploads/anuncios/";
+          $dir_foto = trim($dir.'fotos/');
+          $dir_adjunto = trim($dir.'adjuntos/');
+          $filePath = $dir_adjunto . $anuncio->adjunto;
+          $filePathAlternative = $dir_foto . $anuncio->adjunto;
+          if(file_exists($filePath)){
+            $action .= '<a target="_blank" data-toggle="tooltip" data-placement="top" class="btn btn-primary btn-xs" title="Descargar" href="' . base_url() . 'uploads/anuncios/adjuntos/' . $anuncio->adjunto . '"><span class="fa fa-download"></span></a>' . ' ';
+          }else if(file_exists($filePathAlternative)){
+            $action .= '<a target="_blank" data-toggle="tooltip" data-placement="top" class="btn btn-primary btn-xs" title="Descargar" href="' . base_url() . 'uploads/anuncios/fotos/' . $anuncio->adjunto . '"><span class="fa fa-download"></span></a>' . ' ';
+          }else{
+            // echo "El archivo no existe en el directorio especificado.";
+          }
         }
         $action .= '<a data-toggle="modal" data-target="#myModal"  class="btn btn-info btn-xs" title="Click para Editar " href="' . base_url() . 'admin/anuncio/add_anuncio/' . $anuncio->anuncio_id . '"><span class="fa fa-pencil"></span></a>' . ' ';
         $action .= '<button type="button" data-toggle="tooltip" data-placement="top" class="btn btn-danger btn-xs" title="Click para Eliminar " onclick="deleteAnuncio('.$anuncio->anuncio_id.')"><span class="fa fa-trash-o"></span></button>' . ' ';
@@ -117,42 +128,53 @@ class Anuncio extends Admin_Controller{
       if(isset($_FILES['foto']) && $_FILES['foto']['name'] != ""){
         $data_upload_foto    = $this->guardar_archivo($dir_foto, 'foto');
         $data['foto']        = $data_upload_foto['file_name'];
-        if($_FILES['foto']['error'] === UPLOAD_ERR_OK){
-          $file = $_FILES['foto']['tmp_name'];
-          $name = $_FILES['foto']['name'];
-          $description = "Imagen subida a: ".$sectioninfo->name;
-          $upload = uploadFileToDrive($name,$file,$description,$folderparentId);
-          $data['id_image'] = $upload->id;
-        }
       }
 
       if(isset($_FILES['adjunto']) && $_FILES['adjunto']['name'] != ""){
         $data_upload_adjunto = $this->guardar_archivo($dir_adjunto, 'adjunto');
         $data['adjunto']     = $data_upload_adjunto['file_name'];
-        if($_FILES['adjunto']['error'] === UPLOAD_ERR_OK){
-          $file = $_FILES['adjunto']['tmp_name'];
-          $name = $_FILES['adjunto']['name'];
-          $description = "Archivo subido a: ".$sectioninfo->name;
-          $upload = uploadFileToDrive($name,$file,$description,$folderparentId);
-          $data['id_document'] = $upload->id;
-        }
       }
       
       $this->anuncio_model->_table_name  = 'tbl_anuncios';
       $this->anuncio_model->_primary_key = "anuncio_id";
       $return_id = $this->anuncio_model->save($data, $id);
+      $name_folder = $this->input->post('titulo');
+      $description_folder = 'Anuncio creado en '.$sectioninfo->name.': "ID_NOMBRE" - ('.$return_id.'_'.$name_folder.'), Descripción:'.$this->input->post('descripcion');
+      $folder = driveCreate($name_folder, $folderparentId, $description_folder); // CREACIÓN DE LA CARPETA PARA EL ANUNCIO, EN GOOGLE DRIVE
+      $data_update['id_parentfolder'] = $folder->id;
+      // SUBIR FOTO A LA CARPETA DEL ANUNCIO
+      if(isset($_FILES['foto']) && $_FILES['foto']['name'] != ""){
+        if($_FILES['foto']['error'] === UPLOAD_ERR_OK){
+          $file = $_FILES['foto']['tmp_name'];
+          $name = $_FILES['foto']['name'];
+          $description = "Imagen subida a: ".$sectioninfo->name;
+          $upload = uploadFileToDrive($name,$file,$description,$data_update['id_parentfolder']);
+          $data_update['id_image'] = $upload->id;
+        }
+      }
+      // SUBIR ADJUNTO A LA CARPETA DEL ANUNCIO
+      if(isset($_FILES['adjunto']) && $_FILES['adjunto']['name'] != ""){
+        if($_FILES['adjunto']['error'] === UPLOAD_ERR_OK){
+          $file = $_FILES['adjunto']['tmp_name'];
+          $name = $_FILES['adjunto']['name'];
+          $description = "Archivo subido a: ".$sectioninfo->name;
+          $upload = uploadFileToDrive($name,$file,$description,$data_update['id_parentfolder']);
+          $data_update['id_document'] = $upload->id;
+        }
+      }
+      $id_update = $this->anuncio_model->save($data_update, $return_id); // ACTUALIZAMOS EL REGISTRO CON LA NUEVAS "ID_CARPETA"
       if($return_id){
         $returnanuncio = ['action' => 'created','type' => "success",'message' => "Registo Exitoso", 'anuncio_id' => $return_id];
       }else{
         $returnanuncio = ['action' => 'created','type' => "error",'message' => "Falló el registro", 'anuncio_id' => ''];
       }
     }else{
-      $anuncioinfo = $this->db->select('foto, adjunto, id_image, id_document')->where('anuncio_id', $id)->order_by('anuncio_id', 'DESC')->limit(1)->get('tbl_anuncios')->row();
+      $anuncioinfo = $this->db->select('foto, adjunto, id_image, id_document, id_parentfolder')->where('anuncio_id', $id)->order_by('anuncio_id', 'DESC')->limit(1)->get('tbl_anuncios')->row();
       $data['section_id'] = $this->input->post('section_id');
       $sectioninfo = $this->db->select('name, id_carpeta')->where('id', $this->input->post('section_id'))->order_by('id', 'DESC')->limit(1)->get('tbl_announcements_section')->row();
       $data['titulo'] = $this->input->post('titulo');
       $data['descripcion'] = $this->input->post('descripcion');
-      $folderparentId = $sectioninfo->id_carpeta;
+      $folderparentId = $anuncioinfo->id_parentfolder;
       if(isset($_FILES['foto']) && $_FILES['foto']['name'] != ""){
         // --------------- ELIMINAR LA FOTO ANTERIOR
         if($anuncioinfo->foto != ""){
@@ -172,15 +194,7 @@ class Anuncio extends Admin_Controller{
         if($anuncioinfo->id_image != ""){
           $id_image = driveDelete($anuncioinfo->id_image); // ELIMINAR LA FOTO ANTERIOR SUBIDA EN GOOGLE DRIVE
         }
-        if($_FILES['foto']['error'] === UPLOAD_ERR_OK){
-          $file = $_FILES['foto']['tmp_name'];
-          $name = $_FILES['foto']['name'];
-          $description = "Imagen subida a: ".$sectioninfo->name;
-          $upload = uploadFileToDrive($name,$file,$description,$folderparentId);
-          $data['id_image'] = $upload->id;
-        }
       }
-
       if(isset($_FILES['adjunto']) && $_FILES['adjunto']['name'] != ""){
         // --------------- ELIMINAR EL ADJUNTO ANTERIOR
         if($anuncioinfo->adjunto != ""){
@@ -207,18 +221,45 @@ class Anuncio extends Admin_Controller{
         if($anuncioinfo->id_document != ""){
           $id_document = driveDelete($anuncioinfo->id_document); // ELIMINAR EL ADJUNTO ANTERIOR SUBIDO EN GOOGLE DRIVE
         }
+      }      
+      $this->anuncio_model->_table_name  = 'tbl_anuncios';
+      $this->anuncio_model->_primary_key = "anuncio_id";
+      $return_id = $this->anuncio_model->save($data, $id);
+      $name_folder = $this->input->post('titulo'); // NUEVO NOMBRE PARA LA CARPETA EN GOOGLE DRIVE
+      $description_folder = 'Anuncio creado en '.$sectioninfo->name.': "ID_NOMBRE" - ('.$return_id.'_'.$name_folder.'), Descripción:'.$this->input->post('descripcion');
+      $folder = driveUpdate($folderparentId, $name_folder,$description_folder); // CREACIÓN DE LA CARPETA EN GOOGLE DRIVE
+
+      // ACTUALIZAR FOTO EN LA CARPETA DEL ANUNCIO
+      if(isset($_FILES['foto']) && $_FILES['foto']['name'] != ""){
+        // --------------- ELIMINAR LA FOTO ANTERIOR
+        if($anuncioinfo->id_image != ""){
+          $id_image = driveDelete($anuncioinfo->id_image); // ELIMINAR LA FOTO ANTERIOR SUBIDA EN GOOGLE DRIVE
+        }
+        if($_FILES['foto']['error'] === UPLOAD_ERR_OK){
+          $file = $_FILES['foto']['tmp_name'];
+          $name = $_FILES['foto']['name'];
+          $description = "Imagen subida a: ".$sectioninfo->name;
+          $upload = uploadFileToDrive($name,$file,$description,$folderparentId);
+          $data_update['id_image'] = $upload->id;
+          $id_update = $this->anuncio_model->save($data_update, $return_id); // ACTUALIZAMOS EL REGISTRO CON LA NUEVAS "ID_CARPETA"
+        }
+      }
+      // ACTUALIZAR ADJUNTO EN LA CARPETA DEL ANUNCIO
+      if(isset($_FILES['adjunto']) && $_FILES['adjunto']['name'] != ""){
+        // --------------- ELIMINAR EL ADJUNTO ANTERIOR
+        if($anuncioinfo->id_document != ""){
+          $id_document = driveDelete($anuncioinfo->id_document); // ELIMINAR EL ADJUNTO ANTERIOR SUBIDO EN GOOGLE DRIVE
+        }
         if($_FILES['adjunto']['error'] === UPLOAD_ERR_OK){
           $file = $_FILES['adjunto']['tmp_name'];
           $name = $_FILES['adjunto']['name'];
           $description = "Archivo subido a: ".$sectioninfo->name;
           $upload = uploadFileToDrive($name,$file,$description,$folderparentId);
-          $data['id_document'] = $upload->id;
+          $data_update['id_document'] = $upload->id;
+          $id_update = $this->anuncio_model->save($data_update, $return_id); // ACTUALIZAMOS EL REGISTRO CON LA NUEVAS "ID_CARPETA"
         }
       }
-      
-      $this->anuncio_model->_table_name  = 'tbl_anuncios';
-      $this->anuncio_model->_primary_key = "anuncio_id";
-      $return_id = $this->anuncio_model->save($data, $id);
+
       if($return_id){
         $returnanuncio = ['action' => 'updated','type' => "success",'message' => "Actualización Exitosa", 'anuncio_id' => $return_id];
       }else{
@@ -252,7 +293,7 @@ class Anuncio extends Admin_Controller{
   // ------------------- ELIMINAR ANUNCIO
   public function delete_anuncio($id = NULL){
     if(isset($id)){
-      $data_anuncio = $this->db->select('foto, adjunto, id_image, id_document')->where('anuncio_id', $id)->order_by('anuncio_id', 'DESC')->limit(1)->get('tbl_anuncios')->row();
+      $data_anuncio = $this->db->select('foto, adjunto, id_image, id_document, id_parentfolder')->where('anuncio_id', $id)->order_by('anuncio_id', 'DESC')->limit(1)->get('tbl_anuncios')->row();
       if(count($data_anuncio) > 0){
         // ------------------ DEFINIR LA RUTA PARA AMBOS CASOS, FOTOS Y ADJUNTOS...
         $dir = "./uploads/anuncios/";
@@ -271,11 +312,6 @@ class Anuncio extends Admin_Controller{
             // echo "El archivo no existe en el directorio especificado.";
           }
         }
-        
-        if($data_anuncio->id_image != ""){
-          $id_image = driveDelete($data_anuncio->id_image); // ELIMINAR LA FOTO ANTERIOR SUBIDA EN GOOGLE DRIVE
-        }
-
         // --------------- ELIMINAR EL ADJUNTO ANTERIOR
         if($data_anuncio->adjunto != ""){
           $filePath = $dir_adjunto . $data_anuncio->adjunto;
@@ -297,8 +333,15 @@ class Anuncio extends Admin_Controller{
           }
         }
 
-        if($data_anuncio->id_document != ""){
-          $id_document = driveDelete($data_anuncio->id_document); // ELIMINAR EL ADJUNTO ANTERIOR SUBIDO EN GOOGLE DRIVE
+        if($data_anuncio->id_parentfolder != ""){
+          $id_document = driveDelete($data_anuncio->id_parentfolder); // ELIMINAR LA CARPETA COMPLETA DEL ANUNCIO EN GOOGLE DRIVE
+        }else{
+          if($data_anuncio->id_image != ""){
+            $id_image = driveDelete($data_anuncio->id_image); // ELIMINAR LA FOTO ANTERIOR SUBIDA EN GOOGLE DRIVE
+          }
+          if($data_anuncio->id_document != ""){
+            $id_document = driveDelete($data_anuncio->id_document); // ELIMINAR EL ADJUNTO ANTERIOR SUBIDO EN GOOGLE DRIVE
+          }
         }
 
         if($this->db->where('anuncio_id', $id)->delete('tbl_anuncios')){

@@ -1,3 +1,63 @@
+$(() => {
+  $(document).on("submit","form#anuncio",function(e){
+    let formIsValid = true;
+    $(this).find('input[required]').each(function(){
+      if($(this).val() === ''){
+        formIsValid = false;
+        // $(this).addClass('input-error');
+      }else{
+        // $(this).removeClass('input-error');
+      }
+    });
+    if(!formIsValid){
+      event.preventDefault();
+    }else{
+      $(this).find('button, input[type="button"]').prop('disabled', true);
+      if($(this).find('button[type="submit"]').hasClass("btn-tocreated")){
+        $(`<div id="loading-indicator-tomoreforce">
+          <div class="loading-indicator__c">
+            <div class="hourglass"></div>
+            <div class="loading-indicator__c--cMssg">
+              <span>Creando anuncio...</span>
+            </div>
+          </div>
+        </div>`).insertBefore('body > .wrapper');
+      }else{
+        $(`<div id="loading-indicator-tomoreforce">
+          <div class="loading-indicator__c">
+            <div class="hourglass"></div>
+            <div class="loading-indicator__c--cMssg">
+              <span>Actualizando anuncio...</span>
+            </div>
+          </div>
+        </div>`).insertBefore('body > .wrapper');
+      }      
+      $(this).find('button[type="submit"]').addClass('submit-clicked');
+    }
+  });
+  $(document).on('click', '.status-anuncio', function(){
+    let status = "", id = $(this).data('id');
+    if($(this).is(":checked")){
+      status = $(this).val();
+    }else{
+      status = "off";
+    }
+    $.ajax({
+      type: "POST",
+      url: base_url + 'admin/anuncio/active/' + id + '/' + status,
+      dataType: "json",
+      success: function(data){
+        toastr[data.type](data.message);
+        if(status == 1){
+          table_url(base_url + "admin/anuncio/anuncioList/");
+        }else{
+          table_url(base_url + "admin/anuncio/anuncioList/");
+        }
+      }
+    });
+  });
+});
+var loading = '<h6 class="ajax-loading"><i class="fa fa-spinner fa-spin"></i>Cargando...</h6>';
 function is_json(str){
   try{
     JSON.parse(str);
@@ -6,28 +66,6 @@ function is_json(str){
   }
   return true;
 }
-var loading = '<h6 class="ajax-loading"><i class="fa fa-spinner fa-spin"></i>Cargando...</h6>';
-$(document).on('click', '.status-anuncio', function(){
-  let status = "", id = $(this).data('id');
-  if($(this).is(":checked")){
-    status = $(this).val();
-  }else{
-    status = "off";
-  }
-  $.ajax({
-    type: "POST",
-    url: base_url + 'admin/anuncio/active/' + id + '/' + status,
-    dataType: "json",
-    success: function(data){
-      toastr[data.type](data.message);
-      if(status == 1){
-        table_url(base_url + "admin/anuncio/anuncioList/");
-      }else{
-        table_url(base_url + "admin/anuncio/anuncioList/");
-      }
-    }
-  });
-});    
 function deleteAnuncio($data){
   Swal.fire({
     title: 'Estás seguro?',
@@ -49,10 +87,8 @@ function deleteAnuncio($data){
           "_method": "DELETE",
         },
         success: function(e){
-          console.log(e);
           if(is_json(e) && e != []){
             let r = JSON.parse(e);
-            console.log(r);
             if(r.type == "success"){
               Swal.fire({
                 icon: 'success',
@@ -128,7 +164,6 @@ function handleFileSelect(evt){
   }
   reader.readAsBinaryString(evt.target.files[0]);
 }
-
 document.addEventListener('DOMContentLoaded', function() {
   var photoInput = document.getElementById('photo');
   var attachmentInput = document.getElementById('adjunto');

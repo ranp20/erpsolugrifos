@@ -20,9 +20,9 @@
   <div class="form-group mt">
     <div class="col-lg-12 text-right">
       <?php if (isset($announcements_sec_info)) : ?>
-        <button type="submit" class="btn btn-sm btn-primary">Actualizar</button>
+        <button type="submit" class="btn btn-sm btn-primary btn-toupdated">Actualizar</button>
       <?php else : ?>
-        <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
+        <button type="submit" class="btn btn-sm btn-primary btn-tocreated">Guardar</button>
       <?php endif; ?>
       <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
     </div>

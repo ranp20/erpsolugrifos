@@ -1,5 +1,64 @@
-$(document).ajaxComplete(function(){
-  // $('input[type=checkbox]').bootstrapToggle();
+$(() => {
+  $(document).on("submit","form#announcements_section",function(e){
+    let formIsValid = true;
+    $(this).find('input[required]').each(function(){
+      if($(this).val() === ''){
+        formIsValid = false;
+        // $(this).addClass('input-error');
+      }else{
+        // $(this).removeClass('input-error');
+      }
+    });
+    if(!formIsValid){
+      event.preventDefault();
+    }else{
+      $(this).find('button, input[type="button"]').prop('disabled', true);
+      if($(this).find('button[type="submit"]').hasClass("btn-tocreated")){
+        $(`<div id="loading-indicator-tomoreforce">
+          <div class="loading-indicator__c">
+            <div class="hourglass"></div>
+            <div class="loading-indicator__c--cMssg">
+              <span>Creando registro...</span>
+            </div>
+          </div>
+        </div>`).insertBefore('body > .wrapper');
+      }else{
+        $(`<div id="loading-indicator-tomoreforce">
+          <div class="loading-indicator__c">
+            <div class="hourglass"></div>
+            <div class="loading-indicator__c--cMssg">
+              <span>Actualizando registro...</span>
+            </div>
+          </div>
+        </div>`).insertBefore('body > .wrapper');
+      }      
+      $(this).find('button[type="submit"]').addClass('submit-clicked');
+    }
+  });
+  $(document).on('click', '.status-anuncio', function(){
+    let el = $(this), status = "", id = el.data('id');
+    if($(this).is(":checked")){
+      status = $(this).val();
+    }else{
+      status = "off";
+    }
+    $.ajax({
+      type: "POST",
+      url: base_url + 'admin/announcements_section/active/' + id + '/' + status,
+      dataType: "json",
+      beforeSend: function (){
+        // loader...
+      },
+      success: function (data){
+        toastr[data.type](data.message);
+        if(status == 1){
+          el.data('status', '2');
+        }else{
+          el.data('status', '1');
+        }
+      }
+    });
+  });    
 });
 function is_json(str){
   try{
@@ -9,38 +68,7 @@ function is_json(str){
   }
   return true;
 }
-var loading = '<h6 class="ajax-loading"><i class="fa fa-spinner fa-spin"></i>Cargando...</h6>'
-$(document).on('click', '.status-anuncio', function(){
-  let el = $(this), status = "", id = el.data('id');
-  if($(this).is(":checked")){
-      status = $(this).val();
-  }else{
-      status = "off";
-  }
-  $.ajax({
-    type: "POST",
-    url: base_url + 'admin/announcements_section/active/' + id + '/' + status,
-    dataType: "json",
-    beforeSend: function (){
-      /*
-      el.bootstrapToggle('disable');
-      el.parent().parent().append(loading);
-      */
-    },
-    success: function (data){
-      toastr[data.type](data.message);
-      if(status == 1){
-        el.data('status', '2');
-      }else{
-        el.data('status', '1');
-      }
-      /*
-      $(".ajax-loading").remove()
-      el.bootstrapToggle('enable');
-      */
-    }
-  });
-});    
+var loading = '<h6 class="ajax-loading"><i class="fa fa-spinner fa-spin"></i>Cargando...</h6>';
 function deleteAnnouncements_section($data){
   Swal.fire({
     title: 'Estás seguro?',
