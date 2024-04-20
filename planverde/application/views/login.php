@@ -34,7 +34,8 @@ $admsett_snetwork_facebook_url = (config_item('socialnetwork_facebook_url') != "
 $admsett_snetwork_instagram_url = (config_item('socialnetwork_instagram_url') != "") ?  config_item('socialnetwork_instagram_url') :  "";
 $admsett_snetwork_linkedin_url = (config_item('socialnetwork_linkedin_url') != "") ?  config_item('socialnetwork_linkedin_url') :  "";
 /*
-$urlPlanVerdeUploads = $actual_link . "/erpsolugrifos";
+$urlPlanVerdeUploads = $actual_link . "/planverde/uploads";
+$urlInitProject = $actual_link;
 */
 $urlPlanVerdeUploads = $actual_link . "/erpsolugrifos/planverde/uploads";
 $urlInitProject = $actual_link . '/erpsolugrifos/';

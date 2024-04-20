@@ -18,9 +18,7 @@ $admsett_icon_favicon = "";
 $admsett_icon_favicon = (config_item('favicon') != "") ?  base_url() . config_item('favicon') :  "http://placehold.it/16x16";
 $admsett_icon_favicon_ext = getExtension($admsett_icon_favicon);
 $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
-/*
-$url = $actual_link . "/";
-*/
+// $url = $actual_link . "/";
 $url = $actual_link . "/erpsolugrifos/";
 ?>
 <!DOCTYPE html>

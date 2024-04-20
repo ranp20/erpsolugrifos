@@ -3,9 +3,7 @@ $user_id = $this->session->userdata('user_id');
 $profile_info = $this->db->where('user_id', $user_id)->get('tbl_account_details')->row();
 $user_info = $this->db->where('user_id', $user_id)->get('tbl_users')->row();
 $languages = $this->db->where('active', 1)->order_by('name', 'ASC')->get('tbl_languages')->result();
-/*
-$url = $actual_link . "/planverde";
-*/
+// $urlPlanVerde = $actual_link . "/planverde";
 $urlPlanVerde = $actual_link . "/erpsolugrifos/planverde";
 ?>
 <header class="topnavbar-wrapper">
