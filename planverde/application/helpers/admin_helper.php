@@ -2727,6 +2727,22 @@ function driveUpdate($id, $newName, $newdescription = '', $mimeType = 'applicati
         return array("estado"=>false,"error"=>$error->getMessage());
     }   
 }
+// ------------- OBTENER LA CARPETA CONTENEDORA DE UN ARCHIVO - GOOGLE DRIVE
+function getParentFolderId($id){
+    try{
+        $service = driveService();
+        $file = $service->files->get($id, array('fields' => 'parents'));
+        $parents = $file->getParents();
+        $firstParentId = $parents[0]; // SELECCIONAR LA CARPETA CONTENEDORA INMEDIATA
+        // $parentGetId = "";
+        // foreach($parents as $parent){
+        //     echo $parent."<br>";
+        // }
+        return $firstParentId;
+    }catch(Google_Service_Exception $error){
+        return array("estado"=>false,"error"=>$error->getMessage());
+    }
+}
 // ------------- ELIMINAR CARPETA - GOOGLE DRIVE
 function driveDelete($id){
     try{

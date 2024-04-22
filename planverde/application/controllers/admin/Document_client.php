@@ -62,7 +62,11 @@ class Document_client extends Admin_Controller{
         $action = null;
         $sub_array = array();
         $sub_array[] = $document->document_id;
-        $sub_array[] = '<a href="https://drive.google.com/open?id='.$document->id_archivo.'" target="_blank" class="color-paragraph"><span class="txt-underline">'.$document->nombre.'</span></a>';
+        if($document->id_contentfolder != ""){
+          $sub_array[] = '<a href="https://drive.google.com/open?id='.$document->id_contentfolder.'" target="_blank" class="color-paragraph"><span class="txt-underline">'.$document->nombre.'</span></a>';
+        }else{
+          $sub_array[] = '<a href="https://drive.google.com/open?id='.$document->id_archivo.'" target="_blank" class="color-paragraph"><span class="txt-underline">'.$document->nombre.'</span></a>';
+        }
         $cliente =  $this->db->get_where("tbl_cliente", ['cliente_id' => $document->client_id])->row();
         $sub_array[] = $cliente->ruc . ' - ' . $cliente->razon_social;
         $sub_array[] = $this->db->get_where("tbl_anio", ['anio_id' => $document->anio])->row()->anio;
@@ -102,7 +106,9 @@ class Document_client extends Admin_Controller{
         }
       }
 
-      $ruta = 'https://drive.google.com/open?id=' . $id_archivo;      
+      $rutaFolderParent = getParentFolderId($id_archivo); // OBTENER LA CARPETA CONTENEDORA DONDE ESTÁ ALOJADO EL DOCUMENTO...
+      $ruta = 'https://drive.google.com/open?id=' . $id_archivo;    
+        
       $data = [
       'client_id'    => $this->input->post('cliente_id'),
       'sede_id'      => $this->input->post('sede_id'),
@@ -112,7 +118,8 @@ class Document_client extends Admin_Controller{
       'mes'          => $this->input->post('mes'),
       'user_id'      => $_SESSION['user_id'],
       'ruta'         => $ruta,
-      'id_archivo'   => $id_archivo
+      'id_archivo'   => $id_archivo,
+      'id_contentfolder'   => $rutaFolderParent
       ];
 
       $this->document_client_model->_table_name  = 'tbl_documents';
